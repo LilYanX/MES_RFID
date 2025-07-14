@@ -1,0 +1,104 @@
+#################################
+# BACKEND - Python / FastAPI
+#################################
+
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.env
+.env.*
+*.db
+*.sqlite3
+
+# Virtualenv
+venv/
+env/
+ENV/
+.venv/
+.ENV/
+pip-log.txt
+
+# IDEs & outils
+.vscode/
+.idea/
+*.code-workspace
+
+# PyInstaller
+*.spec
+dist/
+build/
+
+# Mypy / Pyright
+.mypy_cache/
+.pyright/
+
+# Tests
+.coverage
+htmlcov/
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+.cache/
+.pytest_cache/
+
+# Logs
+*.log
+
+#################################
+# FRONTEND - Next.js / React
+#################################
+
+# Next.js build
+.next/
+out/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs/
+*.log
+
+# IDEs & outils
+.vscode/
+.idea/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+#################################
+# GLOBAL
+#################################
+
+# Mac system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Linux
+*~
+
+# Global logs
+*.log
