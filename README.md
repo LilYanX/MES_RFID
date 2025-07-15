@@ -54,10 +54,6 @@ npm install
 npm run dev
 ```
 
-**Ensure `.env.local` contains:**
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8000
-
 ---
 
 ## MongoDB Configuration
@@ -97,6 +93,6 @@ COLLECTION_NAME=rfid_events
 - **LilYanX** — Project Owner/Manager & Backend Developer
 - **MaximePiçois1** — Data manager
 - **aLopes1** - IoT Developer
-- **toto8050** - Frontend Developer
+- **toto8050** - Frontend Developer & UI/UX Designer
 - **OlivierMartiniakCesi** - Web Security Developer
 - **ThomasGRN** - Software Architect
