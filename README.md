@@ -26,6 +26,38 @@ MES_RFID/
 
 ---
 
+# MES RFID System
+
+This project is a full-stack RFID-based Manufacturing Execution System (MES) designed to track and manage textile articles through various production steps. It provides real-time visibility, traceability, and a customizable workflow, ideal for industrial laundries or factories with RFID-tagged goods.
+
+---
+
+## Core Features
+
+- ✅ Complete traceability of each article’s production steps
+- ✅ Real-time dashboard interface with status monitoring
+- ✅ Article catalog enriched with product data (type, size, color, etc.)
+- 🔜 Production order planning
+- 🔜 Performance statistics
+- 🔜 Alerts on errors or slowdowns
+- 🔜 Visualization of connected devices (RFID scanners) and their status
+
+---
+
+## Roadmap
+
+- [x] Functional MES dashboard
+- [x] Step-by-step RFID traceability
+- [x] Enriched article database
+- [ ] User & role management
+- [ ] Visualization of process statistics
+- [ ] Full article history view
+- [ ] Live connected device status (scanners, etc.)
+- [ ] Mobile compatibility
+- [ ] Cloud deployment
+
+---
+
 ## Technologies
 
 - Backend: Python, FastAPI, Uvicorn, PyMongo
@@ -63,10 +95,43 @@ npm run dev
 - Collections: `rfid_events`, `articles`, `steps`
 
 > Make sure to whitelist your IP address and create a user with read/write access.
+## MongoDB Atlas Access
+
+### External Connection
+
+- Use `MONGO_URI` from `.env`
+- Ensure your client IP address is allowed in:  
+  [https://cloud.mongodb.com](https://cloud.mongodb.com) > Project > Network Access
+
+### Project Sharing
+
+To give access to other team members:
+
+1. Go to **Database Access > Add New User**
+2. Recommended role: `Read and write to any database`
+3. MongoDB Atlas UI: [https://cloud.mongodb.com](https://cloud.mongodb.com)
 
 ---
 
-## 🧪 API Endpoints
+## Example Article Data
+
+```json
+{
+  "uuid": "78CBBC9E",
+  "type": "Shirt",
+  "matiere": "Cotton",
+  "couleur": "White",
+  "taille": "M",
+  "temps_process": {
+    "lavage": "15min",
+    "sechage": "10min",
+    "pliage": "5min"
+  }
+}
+
+---
+
+## API
 
 | Method | Endpoint                 | Description                          |
 |--------|--------------------------|--------------------------------------|
@@ -74,6 +139,14 @@ npm run dev
 | GET    | `/api/articles`          | Get enriched article information     |
 | GET    | `/api/steps`             | List of available process steps      |
 | POST   | `/api/log_event`         | Log a scan (from scanner)            |
+
+### Example routes:
+- GET /api/dashboard → List of articles currently in process
+- POST /api/log → Record an RFID scan event
+- GET /api/articles/:uuid → Detailed information about one article
+
+Interactive Swagger docs:
+http://localhost:8000/docs
 
 ---
 
