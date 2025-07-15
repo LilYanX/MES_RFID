@@ -3,7 +3,7 @@ from db.mongodb import db
 
 router = APIRouter()
 
-@router.get("/inventory")
+@router.get("/inventory", tags=["Events"])
 async def get_inventory():
     # Dernier état connu de chaque article
     pipeline = [

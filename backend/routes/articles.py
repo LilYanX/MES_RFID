@@ -3,7 +3,7 @@ from db.mongodb import db
 
 router = APIRouter()
 
-@router.get("/articles")
+@router.get("/articles", tags=["Articles"])
 async def get_all_articles():
     cursor = db["articles"].find()
     result = []
@@ -12,7 +12,7 @@ async def get_all_articles():
         result.append(doc)
     return result
 
-@router.get("/articles/{uuid}")
+@router.get("/articles/{uuid}", tags=["Articles"])
 async def get_article(uuid: str):
     doc = await db["articles"].find_one({"uuid": uuid})
     if not doc:
@@ -20,7 +20,7 @@ async def get_article(uuid: str):
     doc["_id"] = str(doc["_id"])
     return doc
 
-@router.get("/rfid_events/{uuid}")
+@router.get("/rfid_events/{uuid}", tags=["Articles"])
 async def get_rfid_events(uuid: str):
     cursor = db["rfid_events"].find({"uuid": uuid}).sort("timestamp", 1)
     result = []

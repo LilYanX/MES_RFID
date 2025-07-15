@@ -9,7 +9,7 @@ client = MongoClient("mongodb+srv://admin:G0%40tDesEchecs@dbrfid.ojrspq8.mongodb
 db = client["mes_rfid"]
 collection = db["rfid_events"]
 
-@router.get("/dashboard")
+@router.get("/dashboard", tags=["Events"])
 def get_articles_in_process():
     pipeline = [
         {

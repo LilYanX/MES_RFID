@@ -3,7 +3,7 @@ from db.mongodb import db
 
 router = APIRouter()
 
-@router.get("/infos/{uuid}")
+@router.get("/infos/{uuid}", tags=["Articles"])
 async def get_article_info(uuid: str):
     doc = await db["article_info"].find_one({"uuid": uuid})
     if not doc:

@@ -3,7 +3,7 @@ from db.mongodb import db
 
 router = APIRouter()
 
-@router.get("/stats")
+@router.get("/stats", tags=["Statistics"])
 async def get_stats():
     # Statistiques globales
     total = await db["rfid_events"].count_documents({})
