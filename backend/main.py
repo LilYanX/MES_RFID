@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes import article_info, dashboard, historic, inventory, steps, statistics, articles
-from OAuth_service.middleware.OAuthMiddleware import OAuthMiddleware
 from OAuth_service.routes.OAuthRoutes import router as OAuthRoutes
 
 app = FastAPI(
@@ -18,7 +17,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.add_middleware(OAuthMiddleware)
 
 app.include_router(article_info.router, prefix="/api")
 app.include_router(dashboard.router, prefix="/api")
