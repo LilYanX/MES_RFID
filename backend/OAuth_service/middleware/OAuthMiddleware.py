@@ -1,108 +1,65 @@
-from dotenv import load_dotenv
+# backend/OAuth_service/middleware/auth.py
 
-load_dotenv()
-
-# Middleware
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.requests import Request
-from starlette.responses import Response
-from fastapi import HTTPException, status
-import jwt
 import os
-import dotenv
-import datetime
+import jwt
+from fastapi import Request, HTTPException
+from fastapi.responses import JSONResponse
+from functools import wraps
+from OAuth_service.config.db import db_auth
 
-SECRET_KEY = os.getenv("JWT_SECRET")
-ALGORITHM = "HS256"
-COOKIE_ACCESS = "access_token"
-COOKIE_REFRESH = "refresh_token"
-ACCESS_TOKEN_EXPIRE_MINUTES = 15
-REFRESH_TOKEN_EXPIRE_DAYS = 7   
+JWT_ACCESS_SECRET = os.getenv("JWT_ACCESS_SECRET")
+JWT_REFRESH_SECRET = os.getenv("JWT_REFRESH_SECRET")
 
+def verify_token(token, secret):
+    try:
+        return jwt.decode(token, secret, algorithms=["HS256"])
+    except jwt.ExpiredSignatureError:
+        return None
+    except jwt.InvalidTokenError:
+        return None
 
-def create_access_token(data: dict):
-    to_encode = data.copy()
-    expire = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
-    to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+def generate_access_token(user):
+    payload = {"user": user}
+    return jwt.encode(payload, JWT_ACCESS_SECRET, algorithm="HS256", expires_delta=900)  # 15 min
 
-def create_refresh_token(data: dict):
-    to_encode = data.copy()
-    expire = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
-    to_encode.update({"exp": expire, "type": "refresh"})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+def auth_required(func):
+    @wraps(func)
+    async def wrapper(request: Request, *args, **kwargs):
+        access_token = request.headers.get("x-auth-token")
+        refresh_token = request.headers.get("x-refresh-token")
 
-class OAuthMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app, secret_key: str = SECRET_KEY, algorithm: str = ALGORITHM):
-        super().__init__(app)
-        self.secret_key = secret_key
-        self.algorithm = algorithm
+        if not access_token:
+            raise HTTPException(status_code=401, detail="Access token manquant")
 
-    async def dispatch(self, request: Request, call_next):
-        access_token = request.cookies.get(COOKIE_ACCESS)
-        refresh_token = request.cookies.get(COOKIE_REFRESH)
-        user_data = {"sub": "user_id"}  # À adapter selon ton système d'identité
-        new_access_token = None
-        new_refresh_token = None
-        user_payload = None
-
-        if not access_token or not refresh_token:
-            # Générer les deux tokens si absents
-            new_access_token = create_access_token(user_data)
-            new_refresh_token = create_refresh_token(user_data)
-            user_payload = user_data
-        else:
-            try:
-                payload = jwt.decode(access_token, self.secret_key, algorithms=[self.algorithm])
-                user_payload = payload
-            except jwt.ExpiredSignatureError:
-                # access_token expiré, tenter de rafraîchir avec refresh_token
-                try:
-                    refresh_payload = jwt.decode(refresh_token, self.secret_key, algorithms=[self.algorithm])
-                    if refresh_payload.get("type") != "refresh":
-                        raise jwt.InvalidTokenError
-                    # Générer un nouveau access_token
-                    new_access_token = create_access_token({"sub": refresh_payload["sub"]})
-                    user_payload = {"sub": refresh_payload["sub"]}
-                except jwt.ExpiredSignatureError:
-                    raise HTTPException(
-                        status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail="Refresh token expired",
-                        headers={"WWW-Authenticate": "Bearer"},
-                    )
-                except jwt.InvalidTokenError:
-                    raise HTTPException(
-                        status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail="Invalid refresh token",
-                        headers={"WWW-Authenticate": "Bearer"},
-                    )
-            except jwt.InvalidTokenError:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid access token",
-                    headers={"WWW-Authenticate": "Bearer"},
+        decoded = verify_token(access_token, JWT_ACCESS_SECRET)
+        if not decoded:
+            if not refresh_token:
+                return JSONResponse(
+                    status_code=401,
+                    content={"message": "Session expirée", "code": "TOKEN_EXPIRED"}
                 )
+            refresh_decoded = verify_token(refresh_token, JWT_REFRESH_SECRET)
+            if not refresh_decoded:
+                return JSONResponse(
+                    status_code=401,
+                    content={"message": "Session expirée, veuillez vous reconnecter", "code": "REFRESH_TOKEN_EXPIRED"}
+                )
+            new_access_token = generate_access_token(refresh_decoded["user"])
+            response = JSONResponse(content={})
+            response.headers["x-new-token"] = new_access_token
+            request.state.user = refresh_decoded["user"]
+            return await func(request, *args, **kwargs)
+        else:
+            request.state.user = decoded["user"]
+            return await func(request, *args, **kwargs)
+    return wrapper
 
-        request.state.user = user_payload
-        response = await call_next(request)
-
-        # Si on a généré de nouveaux tokens, les écrire dans les cookies
-        if new_access_token:
-            response.set_cookie(
-                key=COOKIE_ACCESS,
-                value=new_access_token,
-                httponly=True,
-                secure=True,
-                samesite="strict",
-                max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60
-            )
-        if new_refresh_token:
-            response.set_cookie(
-                key=COOKIE_REFRESH,
-                value=new_refresh_token,
-                httponly=True,
-                secure=True,
-                samesite="strict",
-                max_age=REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
-            )
-        return response
+def is_admin(func):
+    @wraps(func)
+    async def wrapper(request: Request, *args, **kwargs):
+        user_id = request.state.user.get("id")
+        user = await db_auth["users"].find_one({"id": user_id})
+        if not user or user.role != "admin":
+            raise HTTPException(status_code=403, detail="Accès refusé : droits administrateur requis")
+        return await func(request, *args, **kwargs)
+    return wrapper
