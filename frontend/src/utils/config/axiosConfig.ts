@@ -20,6 +20,37 @@ axiosInstance.interceptors.request.use((config) => {
     }
     return config;
 });
+ // Intercepteur pour gérer le rafraîchissement automatique du token
+axiosInstance.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        const originalRequest = error.config;
+        if (error.response.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
 
+            try {
+                const refreshToken = document.cookie.split("; ").find(row => row.startsWith("refreshToken="))?.split("=")[1];
+                if (refreshToken) {
+                    const response = await axiosInstance.post("/auth/refresh", {
+                        refreshToken: refreshToken
+                    }, {
+                        withCredentials: true
+                    });
+                    if (response.status === 200) {
+                        const accessToken = response.data.accessToken;
+                        document.cookie = `accessToken=${accessToken}; path=/`;
+                        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+                        return axiosInstance(originalRequest);
+                    }
+                }
+            } catch (refreshError) {
+                console.error("Erreur lors du rafraîchissement du token:", refreshError);
+                // Rediriger vers la page de connexion si le token est invalide
+                window.location.href = "/login";
+            }
+        }
+        return Promise.reject(error);
+    }
+);
 
 export default axiosInstance;
