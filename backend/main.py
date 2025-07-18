@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes import article_info, dashboard, historic, inventory, steps, statistics, articles
+from OAuth_service.routes.OAuthRoutes import router as OAuthRoutes
 
 app = FastAPI(
     title="MES RFID API",
@@ -16,6 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 app.include_router(article_info.router, prefix="/api")
 app.include_router(dashboard.router, prefix="/api")
 app.include_router(historic.router, prefix="/api")
@@ -23,6 +25,10 @@ app.include_router(inventory.router, prefix="/api")
 app.include_router(steps.router, prefix="/api")
 app.include_router(statistics.router, prefix="/api")
 app.include_router(articles.router, prefix="/api")
+
+#OAuth-service
+app.include_router(OAuthRoutes, prefix="/api/auth")
+
 
 @app.get("/")
 def read_root():
