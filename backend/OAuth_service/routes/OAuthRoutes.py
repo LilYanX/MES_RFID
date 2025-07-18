@@ -125,6 +125,38 @@ async def login(request: Request):
     )
     return response
 
+# refresh token
+@router.post("/refresh")
+async def refresh(request: Request):
+    data = await request.json()
+    refreshToken = data["refreshToken"]
+    user = jwt.decode(refreshToken, os.getenv("JWT_REFRESH_SECRET"), algorithms=["HS256"])
+    if not user:
+        return {"message": "Invalid refresh token"}
+    tokens = generateTokens(user)
+    response = JSONResponse(content={
+        "message": "Token refreshed",
+        "accessToken": tokens["accessToken"],
+        "refreshToken": tokens["refreshToken"]
+    })
+    response.set_cookie(
+        key="accessToken",
+        value=tokens["accessToken"],
+        httponly=True,
+        secure=False,  
+        samesite="strict",
+        max_age=6*60*60
+    )
+    response.set_cookie(
+        key="refreshToken",
+        value=tokens["refreshToken"],
+        httponly=True,
+        secure=False,  
+        samesite="strict",
+        max_age=7*24*60*60
+    )
+    return response
+
 # get user info
 @router.get("/users/info/{uuid}")
 @auth_required
@@ -135,7 +167,7 @@ async def get_user(uuid: str):
     return user
 
 # update user name, first name, last name, email, password, role
-@router.put("/users/{uuid}")
+@router.put("/users/updateUser/{uuid}")
 @auth_required
 async def update_user(uuid: str, user: UserModel):
     user = await db_auth["users"].update_one({"uuid": uuid}, {"$set": user.model_dump()})
