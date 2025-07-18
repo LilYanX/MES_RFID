@@ -29,20 +29,20 @@ def auth_required(func):
         refresh_token = request.headers.get("x-refresh-token")
 
         if not access_token:
-            raise HTTPException(status_code=401, detail="Access token manquant")
+            raise HTTPException(status_code=401, detail="Access token missing")
 
         decoded = verify_token(access_token, JWT_ACCESS_SECRET)
         if not decoded:
             if not refresh_token:
                 return JSONResponse(
                     status_code=401,
-                    content={"message": "Session expirée", "code": "TOKEN_EXPIRED"}
+                    content={"message": "Session expired", "code": "TOKEN_EXPIRED"}
                 )
             refresh_decoded = verify_token(refresh_token, JWT_REFRESH_SECRET)
             if not refresh_decoded:
                 return JSONResponse(
                     status_code=401,
-                    content={"message": "Session expirée, veuillez vous reconnecter", "code": "REFRESH_TOKEN_EXPIRED"}
+                    content={"message": "Session expired, please log in again", "code": "REFRESH_TOKEN_EXPIRED"}
                 )
             new_access_token = generate_access_token(refresh_decoded["user"])
             response = JSONResponse(content={})
@@ -60,6 +60,6 @@ def is_admin(func):
         user_id = request.state.user.get("id")
         user = await db_auth["users"].find_one({"id": user_id})
         if not user or user.role != "admin":
-            raise HTTPException(status_code=403, detail="Accès refusé : droits administrateur requis")
+            raise HTTPException(status_code=403, detail="Access denied: admin rights required")
         return await func(request, *args, **kwargs)
     return wrapper
