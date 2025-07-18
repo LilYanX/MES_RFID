@@ -7,6 +7,7 @@ import jwt
 import os
 import datetime
 from OAuth_service.middleware.OAuthMiddleware import generate_access_token, verify_token,auth_required
+from fastapi.responses import JSONResponse
 
 def generateTokens(user):
     accessToken = jwt.encode({
@@ -21,7 +22,6 @@ def generateTokens(user):
     }, os.getenv("JWT_REFRESH_SECRET"), algorithm="HS256")
 
     return { "accessToken": accessToken, "refreshToken": refreshToken }
-
 
 
 
@@ -56,13 +56,28 @@ async def register(user: UserModel):
     # Génère le token JWT à partir des données utilisateur
     tokens = generateTokens(user_data)
 
-    # Retourne un message de succès et l'id inséré (converti en string)
-    return {
+    # Réponse avec cookies
+    response = JSONResponse(content={
         "message": "User created successfully",
-        "id": str(insert_result.inserted_id),
-        "tokens": tokens["accessToken"],
-        "refreshToken": tokens["refreshToken"]
-    }
+        "id": str(insert_result.inserted_id)
+    })
+    response.set_cookie(
+        key="accessToken",
+        value=tokens["accessToken"],
+        httponly=True,
+        secure=False,  
+        samesite="strict",
+        max_age=6*60*60
+    )
+    response.set_cookie(
+        key="refreshToken",
+        value=tokens["refreshToken"],
+        httponly=True,
+        secure=False,  
+        samesite="strict",
+        max_age=7*24*60*60
+    )
+    return response
 
 # login avec verification si token est valide
 @router.post("/login")
@@ -81,23 +96,34 @@ async def login(request: Request):
 
     user = await db_auth["users"].find_one({"email": user_data["email"]})
 
-
     if not user:
         return {"message": "User not found", "code": "USER_NOT_FOUND"}
     if user["password_hash"] != user_data["password_hash"] or user["email"] != user_data["email"]:
         return {"message": "Invalid credentials", "code": "INVALID_CREDENTIALS"}
     
-
-
     #Create and return token JWT
     tokens = generateTokens(user)
-    
-    return {
+    response = JSONResponse(content={
         "message": "Login successful",
-        "tokens": tokens["accessToken"],
-        "refreshToken": tokens["refreshToken"],
         "user": user_data
-    }
+    })
+    response.set_cookie(
+        key="accessToken",
+        value=tokens["accessToken"],
+        httponly=True,
+        secure=False,  
+        samesite="strict",
+        max_age=6*60*60
+    )
+    response.set_cookie(
+        key="refreshToken",
+        value=tokens["refreshToken"],
+        httponly=True,
+        secure=False,  
+        samesite="strict",
+        max_age=7*24*60*60
+    )
+    return response
 
 # get user info
 @router.get("/users/info/{uuid}")

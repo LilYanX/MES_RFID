@@ -2,6 +2,7 @@
 
 import os
 import jwt
+import datetime
 from fastapi import Request, HTTPException
 from fastapi.responses import JSONResponse
 from functools import wraps
@@ -19,14 +20,17 @@ def verify_token(token, secret):
         return None
 
 def generate_access_token(user):
-    payload = {"user": user}
-    return jwt.encode(payload, JWT_ACCESS_SECRET, algorithm="HS256", expires_delta=900)  # 15 min
+    payload = {
+        "user": user,
+        "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=6)
+    }
+    return jwt.encode(payload, JWT_ACCESS_SECRET, algorithm="HS256")
 
 def auth_required(func):
     @wraps(func)
     async def wrapper(request: Request, *args, **kwargs):
-        access_token = request.headers.get("x-auth-token")
-        refresh_token = request.headers.get("x-refresh-token")
+        access_token = request.cookies.get("accessToken")
+        refresh_token = request.cookies.get("refreshToken")
 
         if not access_token:
             raise HTTPException(status_code=401, detail="Access token missing")
