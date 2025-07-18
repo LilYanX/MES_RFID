@@ -27,9 +27,9 @@ app.include_router(statistics.router, prefix="/api")
 app.include_router(articles.router, prefix="/api")
 
 #OAuth-service
-app.include_router(OAuthRoutes, prefix="/api/auth")
+app.include_router(OAuthRoutes, prefix="/api", tags=["Users"])
 
 
-@app.get("/")
+@app.get("/", tags=["Home"])
 def read_root():
     return {"message": "MES API is running"}

@@ -39,6 +39,10 @@ function StatsIcon(props: any) {
 function ArticleIcon(props: any) {
   return <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2z"/></svg>;
 }
+// Ajout de l'icône Paramètres
+function SettingsIcon(props: any) {
+  return <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-1.14 1.952-1.14 2.252 0a1.724 1.724 0 002.573 1.01c.987-.57 2.18.623 1.61 1.61a1.724 1.724 0 001.01 2.573c1.14.3 1.14 1.952 0 2.252a1.724 1.724 0 00-1.01 2.573c.57.987-.623 2.18-1.61 1.61a1.724 1.724 0 00-2.573 1.01c-.3 1.14-1.952 1.14-2.252 0a1.724 1.724 0 00-2.573-1.01c-.987.57-2.18-.623-1.61-1.61a1.724 1.724 0 00-1.01-2.573c-1.14-.3-1.14-1.952 0-2.252a1.724 1.724 0 001.01-2.573c-.57-.987.623-2.18 1.61-1.61a1.724 1.724 0 002.573-1.01z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>;
+}
 // ---- Fin composants menu ----
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -52,11 +56,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </h1>
           <nav className="flex flex-col gap-1 mt-6">
             <MenuLink href="/" icon={DashboardIcon}>Dashboard</MenuLink>
-            <MenuLink href="/historic" icon={HistoryIcon}>Historique</MenuLink>
-            <MenuLink href="/inventory" icon={InventoryIcon}>Inventaire</MenuLink>
-            <MenuLink href="/steps" icon={StepsIcon}>Étapes</MenuLink>
-            <MenuLink href="/stats" icon={StatsIcon}>Statistiques</MenuLink>
+            <MenuLink href="/historic" icon={HistoryIcon}>Historic</MenuLink>
+            <MenuLink href="/inventory" icon={InventoryIcon}>Inventory</MenuLink>
+            <MenuLink href="/steps" icon={StepsIcon}>Steps</MenuLink>
+            <MenuLink href="/stats" icon={StatsIcon}>Statistics</MenuLink>
             <MenuLink href="/articles" icon={ArticleIcon}>Articles</MenuLink>
+            <MenuLink href="/settings" icon={SettingsIcon}>Settings</MenuLink>
           </nav>
         </aside>
 

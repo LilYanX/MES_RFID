@@ -1,13 +1,15 @@
-from fastapi import Request, APIRouter, Header
+from fastapi import Request, APIRouter, Header, HTTPException
 from OAuth_service.config.db import db_auth
 from OAuth_service.models.users import UserModel
 import hashlib
 import re
 import jwt
+from typing import List
 import os
 import datetime
 from OAuth_service.middleware.OAuthMiddleware import generate_access_token, verify_token,auth_required
 from fastapi.responses import JSONResponse
+import uuid
 
 def generateTokens(user):
     accessToken = jwt.encode({
@@ -30,7 +32,7 @@ router = APIRouter()
 
 
 # register
-@router.post("/register")
+@router.post("/users/register")
 async def register(user: UserModel):
     # check if all fields are filled
     if not user.email or not user.password_hash or not user.first_name or not user.last_name or not user.role:
@@ -46,6 +48,10 @@ async def register(user: UserModel):
     
     #Hash password
     user.password_hash = hashlib.sha256(user.password_hash.encode()).hexdigest()
+
+    # Génère un uuid unique si non fourni
+    if not user.uuid:
+        user.uuid = str(uuid.uuid4())
 
    # Prépare les données utilisateur
     user_data = user.model_dump()
@@ -159,7 +165,7 @@ async def refresh(request: Request):
 
 # get user info
 @router.get("/users/info/{uuid}")
-@auth_required
+#@auth_required
 async def get_user(uuid: str):
     user = await db_auth["users"].find_one({"uuid": uuid})
     if not user:
@@ -167,20 +173,42 @@ async def get_user(uuid: str):
     return user
 
 # update user name, first name, last name, email, password, role
-@router.put("/users/updateUser/{uuid}")
-@auth_required
+@router.put("/users/update/{uuid}")
+#@auth_required
 async def update_user(uuid: str, user: UserModel):
-    user = await db_auth["users"].update_one({"uuid": uuid}, {"$set": user.model_dump()})
-    return user
+    user_dict = user.model_dump(exclude_unset=True)
+    if "created_at" in user_dict:
+        user_dict.pop("created_at")
+    if "password_hash" in user_dict and user_dict["password_hash"]:
+        import hashlib
+        user_dict["password_hash"] = hashlib.sha256(user_dict["password_hash"].encode()).hexdigest()
+    elif "password_hash" in user_dict:
+        user_dict.pop("password_hash")
+    from datetime import datetime
+    user_dict["updated_at"] = datetime.now()
+    result = await db_auth["users"].update_one({"uuid": uuid}, {"$set": user_dict})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user_dict
 
 
 # delete user
-@router.delete("/users/{uuid}")
-@auth_required
+@router.delete("/users/delete/{uuid}")
+#@auth_required
 async def delete_user(uuid: str):
-    user = await db_auth["users"].delete_one({"uuid": uuid})
-    return user
+    result = await db_auth["users"].delete_one({"uuid": uuid})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"detail": "User deleted"}
 
+@router.get("/users", tags=["Users"], response_model=List[UserModel])
+async def list_users():
+    users = []
+    cursor = db_auth["users"].find()
+    async for user in cursor:
+        user["uuid"] = str(user.get("uuid", ""))
+        users.append(UserModel(**user))
+    return users
 
 
     
