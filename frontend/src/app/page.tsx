@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import DashboardTable from "./components/DashboardTable";
+import DashboardHeader from "./components/DashboardHeader";
 
 type Article = {
   uuid: string
@@ -31,33 +33,11 @@ export default function Home() {
 
   return (
     <main className="p-8">
-      <h1 className="text-3xl font-bold mb-4">Dashboard - MES RFID</h1>
+      <DashboardHeader count={articles.length} />
       {loading ? (
         <p>Chargement...</p>
       ) : (
-        <>
-          <p className="mb-4">Nombre d’articles en cours de traitement : <strong>{articles.length}</strong></p>
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-200 shadow-md rounded-xl">
-              <thead className="bg-gray-100 text-gray-800">
-                <tr>
-                  <th className="py-2 px-4 border">UUID</th>
-                  <th className="py-2 px-4 border">Étape</th>
-                  <th className="py-2 px-4 border">Date de scan</th>
-                </tr>
-              </thead>
-              <tbody>
-                {articles.map((article) => (
-                  <tr key={article.uuid} className="text-center border-t hover:bg-gray-50">
-                    <td className="py-2 px-4">{article.uuid}</td>
-                    <td className="py-2 px-4">{article.latest_step_name}</td>
-                    <td className="py-2 px-4">{new Date(article.last_seen).toLocaleString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </>
+        <DashboardTable articles={articles} />
       )}
     </main>
   )
