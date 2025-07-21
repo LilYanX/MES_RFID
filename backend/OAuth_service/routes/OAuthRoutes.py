@@ -87,7 +87,6 @@ async def register(user: UserModel):
 
 # login avec verification si token est valide
 @router.post("/login")
-@auth_required
 async def login(request: Request):
         
     # json seulement avec email et password_hash
