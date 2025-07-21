@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/utils/redux/hooks";
 import { getUserInfo } from "@/utils/services/authSlice";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
@@ -10,6 +10,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const [loading, setLoading] = useState(true);
   const [isClient, setIsClient] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
+  const isLoginPage = pathname === "/login";
 
   // S'assurer qu'on est côté client avant tout
   useEffect(() => {
@@ -39,11 +41,12 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   }, [user, dispatch, isClient]);
 
   useEffect(() => {
-    if (!loading && !user && isClient) {
+    if (!loading && !user && isClient && !isLoginPage) {
       router.replace("/login");
     }
-  }, [loading, user, router, isClient]);
+  }, [loading, user, router, isClient, isLoginPage]);
 
+  if (isLoginPage) return <>{children}</>;
   if (!isClient || loading) return null;
   if (!user) return null;
   return <>{children}</>;

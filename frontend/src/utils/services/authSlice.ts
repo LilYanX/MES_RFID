@@ -2,13 +2,11 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "@/utils/config/axiosConfig";
 import axios from "axios";
 
-
-
 export const login = createAsyncThunk(
-    "auth/login",
+    "login",
     async (credentials: { email: string; password_hash: string }, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.post("/auth/login", credentials);
+            const response = await axiosInstance.post("/login", credentials);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -20,10 +18,10 @@ export const login = createAsyncThunk(
 );
 
 export const register = createAsyncThunk(
-    "auth/register",
+    "register",
     async (credentials: { email: string; password: string, firstName: string, lastName: string, username: string }, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.post("/auth/register", credentials);
+            const response = await axiosInstance.post("/register", credentials);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -35,10 +33,10 @@ export const register = createAsyncThunk(
 );
 
 export const getUserInfo = createAsyncThunk(
-    "auth/info/{uuid}",
+    "info/{uuid}",
     async (uuid: string, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.get(`/auth/users/info/${uuid}`);
+            const response = await axiosInstance.get(`/users/info/${uuid}`);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -50,10 +48,10 @@ export const getUserInfo = createAsyncThunk(
 );
 
 export const updateUser = createAsyncThunk(
-    "auth/updateUser/{uuid}",
+    "update/{uuid}",
     async (user: { email: string; password: string, firstName: string, lastName: string, username: string, uuid: string }, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.put(`/auth/users/${user.uuid}`, user);
+            const response = await axiosInstance.put(`/users/${user.uuid}`, user);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -65,10 +63,10 @@ export const updateUser = createAsyncThunk(
 );  
 
 export const deleteUser = createAsyncThunk(
-    "auth/delete/{uuid}",
+    "delete/{uuid}",
     async (uuid: string, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.delete(`/auth/users/${uuid}`);
+            const response = await axiosInstance.delete(`/users/${uuid}`);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -84,11 +82,31 @@ export const authSlice = createSlice({
     initialState: {
         user: null,
         isLoading: false,
-        error: null
+        error: null as string | null
     },
     reducers: {
         setUser: (state, action) => {
             state.user = action.payload;
         }
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(login.fulfilled, (state, action) => {
+                // Adapter selon la structure de la réponse API
+                state.user = action.payload.user || action.payload;
+                state.error = null;
+            })
+            .addCase(login.rejected, (state, action) => {
+                state.user = null;
+                state.error = action.payload as string;
+            })
+            .addCase(getUserInfo.fulfilled, (state, action) => {
+                state.user = action.payload.user || action.payload;
+                state.error = null;
+            })
+            .addCase(getUserInfo.rejected, (state, action) => {
+                state.user = null;
+                state.error = action.payload as string;
+            });
     }
 });

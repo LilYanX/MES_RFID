@@ -164,7 +164,7 @@ async def refresh(request: Request):
 
 # get user info
 @router.get("/users/info/{uuid}")
-#@auth_required
+@auth_required
 async def get_user(uuid: str):
     user = await db_auth["users"].find_one({"uuid": uuid})
     if not user:
@@ -173,7 +173,7 @@ async def get_user(uuid: str):
 
 # update user name, first name, last name, email, password, role
 @router.put("/users/update/{uuid}")
-#@auth_required
+@auth_required
 async def update_user(uuid: str, user: UserModel):
     user_dict = user.model_dump(exclude_unset=True)
     if "created_at" in user_dict:
@@ -193,7 +193,7 @@ async def update_user(uuid: str, user: UserModel):
 
 # delete user
 @router.delete("/users/delete/{uuid}")
-#@auth_required
+@auth_required
 async def delete_user(uuid: str):
     result = await db_auth["users"].delete_one({"uuid": uuid})
     if result.deleted_count == 0:
