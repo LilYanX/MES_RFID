@@ -1,6 +1,8 @@
 // src/app/layout.tsx
 import Link from "next/link"
 import "./globals.css"
+import ReduxProvider from '@/components/ReduxProvider';
+import AuthProvider from "@/components/AuthProvider";
 
 export const metadata = {
   title: "MES RFID",
@@ -8,7 +10,7 @@ export const metadata = {
 }
 
 // ---- Composants de menu et icônes ----
-function MenuLink({ href, icon: Icon, children }: { href: string, icon: any, children: React.ReactNode }) {
+function MenuLink({ href, icon: Icon, children }: { href: string, icon: React.FC<React.ComponentProps<'svg'>>, children: React.ReactNode }) {
   const path = typeof window !== 'undefined' ? window.location.pathname : '';
   const active = path === href || (href !== '/' && path.startsWith(href));
   return (
@@ -21,22 +23,22 @@ function MenuLink({ href, icon: Icon, children }: { href: string, icon: any, chi
     </Link>
   );
 }
-function DashboardIcon(props: any) {
+function DashboardIcon(props: React.ComponentProps<'svg'>) {
   return <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8v-10h-8v10zm0-18v6h8V3h-8z"/></svg>;
 }
-function HistoryIcon(props: any) {
+function HistoryIcon(props: React.ComponentProps<'svg'>) {
   return <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>;
 }
-function InventoryIcon(props: any) {
+function InventoryIcon(props: React.ComponentProps<'svg'>) {
   return <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V7a2 2 0 00-2-2H6a2 2 0 00-2 2v6m16 0v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6m16 0H4"/></svg>;
 }
-function StepsIcon(props: any) {
+function StepsIcon(props: React.ComponentProps<'svg'>) {
   return <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h8m-8 6h16"/></svg>;
 }
-function StatsIcon(props: any) {
+function StatsIcon(props: React.ComponentProps<'svg'>) {
   return <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 17a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0zm-3-4V5a1 1 0 00-2 0v8a1 1 0 002 0z"/></svg>;
 }
-function ArticleIcon(props: any) {
+function ArticleIcon(props: React.ComponentProps<'svg'>) {
   return <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2z"/></svg>;
 }
 // ---- Fin composants menu ----
@@ -59,9 +61,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <MenuLink href="/articles" icon={ArticleIcon}>Articles</MenuLink>
           </nav>
         </aside>
-
-        <main className="flex-1 p-8">{children}</main>
+        <main className="flex-1 p-8">
+            <ReduxProvider>
+              <AuthProvider>
+               {children}
+              </AuthProvider>
+            </ReduxProvider>
+        </main>
       </body>
     </html>
-  )
+  );
 }

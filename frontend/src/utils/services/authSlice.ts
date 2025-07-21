@@ -6,7 +6,7 @@ import axios from "axios";
 
 export const login = createAsyncThunk(
     "auth/login",
-    async (credentials: { email: string; password: string }, { rejectWithValue }) => {
+    async (credentials: { email: string; password_hash: string }, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.post("/auth/login", credentials);
             return response.data;
