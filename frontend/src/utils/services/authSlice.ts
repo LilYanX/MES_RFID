@@ -3,10 +3,10 @@ import axiosInstance from "@/utils/config/axiosConfig";
 import axios from "axios";
 
 export const login = createAsyncThunk(
-    "login",
+    "auth/login",
     async (credentials: { email: string; password_hash: string }, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.post("/login", credentials);
+            const response = await axiosInstance.post("/auth/login", credentials);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -18,7 +18,7 @@ export const login = createAsyncThunk(
 );
 
 export const register = createAsyncThunk(
-    "register",
+    "auth/register",
     async (credentials: { email: string; password: string, firstName: string, lastName: string, username: string }, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.post("/register", credentials);
@@ -33,7 +33,7 @@ export const register = createAsyncThunk(
 );
 
 export const getUserInfo = createAsyncThunk(
-    "info/{uuid}",
+    "auth/info/{uuid}",
     async (uuid: string, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.get(`/users/info/${uuid}`);
@@ -48,7 +48,7 @@ export const getUserInfo = createAsyncThunk(
 );
 
 export const updateUser = createAsyncThunk(
-    "update/{uuid}",
+    "auth/update/{uuid}",
     async (user: { email: string; password: string, firstName: string, lastName: string, username: string, uuid: string }, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.put(`/users/${user.uuid}`, user);
@@ -63,7 +63,7 @@ export const updateUser = createAsyncThunk(
 );  
 
 export const deleteUser = createAsyncThunk(
-    "delete/{uuid}",
+    "auth/delete/{uuid}",
     async (uuid: string, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.delete(`/users/${uuid}`);
@@ -110,3 +110,5 @@ export const authSlice = createSlice({
             });
     }
 });
+
+export const { setUser } = authSlice.actions;

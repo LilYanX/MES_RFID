@@ -27,7 +27,7 @@ app.include_router(statistics.router, prefix="/api")
 app.include_router(articles.router, prefix="/api")
 
 #OAuth-service
-app.include_router(OAuthRoutes, prefix="/api", tags=["Users"])
+app.include_router(OAuthRoutes, prefix="/api/auth", tags=["Users"])
 
 
 @app.get("/", tags=["Home"])

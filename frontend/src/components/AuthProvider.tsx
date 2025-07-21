@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/utils/redux/hooks";
-import { getUserInfo } from "@/utils/services/authSlice";
+import { setUser } from "@/utils/services/authSlice";
+import axios from "@/utils/config/axiosConfig";
 import { useRouter, usePathname } from "next/navigation";
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -9,45 +10,40 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const user = useAppSelector(state => state.auth.user);
   const [loading, setLoading] = useState(true);
   const [isClient, setIsClient] = useState(false);
+  const [triedFetch, setTriedFetch] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const isLoginPage = pathname === "/login";
 
-  // S'assurer qu'on est côté client avant tout
   useEffect(() => {
     setIsClient(true);
   }, []);
 
   useEffect(() => {
-    if (!isClient) return;
-    if (!user) {
-      const accessToken = typeof document !== "undefined"
-        ? document.cookie.split("; ").find(row => row.startsWith("accessToken="))?.split("=")[1]
-        : undefined;
-      if (accessToken) {
-        try {
-          const payload = JSON.parse(atob(accessToken.split(".")[1]));
-          const uuid = payload.user.uuid;
-          dispatch(getUserInfo(uuid)).finally(() => setLoading(false));
-        } catch {
-          setLoading(false);
-        }
-      } else {
-        setLoading(false);
-      }
-    } else {
-      setLoading(false);
-    }
-  }, [user, dispatch, isClient]);
+    if (!isClient || triedFetch) return;
+    setTriedFetch(true);
+    // Appelle le backend pour récupérer l'utilisateur courant
+    axios.get("/auth/users/me")
+      .then(res => {
+        console.log("[AuthProvider] Utilisateur courant récupéré:", res.data);
+        dispatch(setUser(res.data));
+      })
+      .catch(err => {
+        console.warn("[AuthProvider] Aucun utilisateur courant (non authentifié)");
+        dispatch(setUser(null));
+      })
+      .finally(() => setLoading(false));
+  }, [isClient, dispatch, triedFetch]);
 
   useEffect(() => {
-    if (!loading && !user && isClient && !isLoginPage) {
+    if (!loading && (!user || Object.keys(user).length === 0) && isClient && !isLoginPage) {
+      console.log("[AuthProvider] Redirection vers /login car user absent ou vide");
       router.replace("/login");
     }
   }, [loading, user, router, isClient, isLoginPage]);
 
   if (isLoginPage) return <>{children}</>;
   if (!isClient || loading) return null;
-  if (!user) return null;
+  if (!user || Object.keys(user).length === 0) return null;
   return <>{children}</>;
 } 

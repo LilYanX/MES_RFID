@@ -165,7 +165,7 @@ async def refresh(request: Request):
 # get user info
 @router.get("/users/info/{uuid}")
 @auth_required
-async def get_user(uuid: str):
+async def get_user(request: Request, uuid: str):
     user = await db_auth["users"].find_one({"uuid": uuid})
     if not user:
         return {"message": "User not found"}
@@ -174,7 +174,7 @@ async def get_user(uuid: str):
 # update user name, first name, last name, email, password, role
 @router.put("/users/update/{uuid}")
 @auth_required
-async def update_user(uuid: str, user: UserModel):
+async def update_user(request: Request, uuid: str, user: UserModel):
     user_dict = user.model_dump(exclude_unset=True)
     if "created_at" in user_dict:
         user_dict.pop("created_at")
@@ -194,12 +194,13 @@ async def update_user(uuid: str, user: UserModel):
 # delete user
 @router.delete("/users/delete/{uuid}")
 @auth_required
-async def delete_user(uuid: str):
+async def delete_user(request: Request, uuid: str):
     result = await db_auth["users"].delete_one({"uuid": uuid})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="User not found")
     return {"detail": "User deleted"}
 
+# List users
 @router.get("/users", tags=["Users"], response_model=List[UserModel])
 async def list_users():
     users = []
@@ -208,6 +209,12 @@ async def list_users():
         user["uuid"] = str(user.get("uuid", ""))
         users.append(UserModel(**user))
     return users
+
+# get current user (me)
+@router.get("/users/me")
+@auth_required
+async def get_me(request: Request):
+    return request.state.user
 
 
     

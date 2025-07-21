@@ -59,7 +59,7 @@ const SettingsPage = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("/users");
+      const res = await axios.get("/auth/users");
       // On s'assure que chaque user a bien un champ uuid (toujours string)
       const usersWithUuid = res.data.map((user: any) => ({
         ...user,
@@ -76,7 +76,7 @@ const SettingsPage = () => {
     setFormError("");
     setFormLoading(true);
     try {
-      await axios.post("/users/register", formUser);
+      await axios.post("/auth/users/register", formUser);
       setShowAddModal(false);
       fetchUsers();
     } catch (err: any) {
@@ -91,7 +91,7 @@ const SettingsPage = () => {
     setFormError("");
     setFormLoading(true);
     try {
-      await axios.put(`/users/update/${formUser.uuid}`, formUser);
+      await axios.put(`/auth/users/update/${formUser.uuid}`, formUser);
       setShowEditModal(false);
       fetchUsers();
     } catch (err: any) {
@@ -104,7 +104,7 @@ const SettingsPage = () => {
   const handleDeleteUser = async (id: string) => {
     if (!confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) return;
     try {
-      await axios.delete(`/users/delete/${id}`);
+      await axios.delete(`/auth/users/delete/${id}`);
       fetchUsers();
     } catch (err) {
       alert("Erreur lors de la suppression.");
