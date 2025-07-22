@@ -130,37 +130,44 @@ async def login(request: Request):
     )
     return response
 
-# refresh token
+# refresh token access
 @router.post("/refresh")
 async def refresh(request: Request):
-    data = await request.json()
-    refreshToken = data["refreshToken"]
-    user = jwt.decode(refreshToken, os.getenv("JWT_REFRESH_SECRET"), algorithms=["HS256"])
-    if not user:
-        return {"message": "Invalid refresh token"}
-    tokens = generateTokens(user)
-    response = JSONResponse(content={
-        "message": "Token refreshed",
-        "accessToken": tokens["accessToken"],
-        "refreshToken": tokens["refreshToken"]
-    })
-    response.set_cookie(
-        key="accessToken",
-        value=tokens["accessToken"],
-        httponly=True,
-        secure=False,  
-        samesite="strict",
-        max_age=6*60*60
-    )
-    response.set_cookie(
-        key="refreshToken",
-        value=tokens["refreshToken"],
-        httponly=True,
-        secure=False,  
-        samesite="strict",
-        max_age=7*24*60*60
-    )
-    return response
+    try:
+        refreshToken = request.cookies.get("refreshToken")
+        if not refreshToken:
+            raise HTTPException(status_code=401, detail="Refresh token not found")
+
+        decoded_token = jwt.decode(refreshToken, os.getenv("JWT_REFRESH_SECRET"), algorithms=["HS256"])
+        if not decoded_token or "user" not in decoded_token:
+            raise HTTPException(status_code=401, detail="Invalid refresh token")
+        
+        user_data = decoded_token["user"]
+        
+        # Vous pouvez ajouter une vérification ici pour s'assurer que l'utilisateur existe toujours en base
+        
+        tokens = generateTokens(user_data)
+        
+        response = JSONResponse(content={
+            "message": "Token refreshed",
+            "accessToken": tokens["accessToken"]
+        })
+        
+        response.set_cookie(
+            key="accessToken",
+            value=tokens["accessToken"],
+            httponly=True,
+            secure=False,  
+            samesite="strict",
+            max_age=6*60*60
+        )
+        
+        return response
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Refresh token has expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid refresh token")
+
 
 # get user info
 @router.get("/users/info/{uuid}")

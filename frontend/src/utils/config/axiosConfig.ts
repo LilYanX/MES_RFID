@@ -8,18 +8,8 @@ const axiosInstance = axios.create({
     },
 });
 
-// Interceptor to add the access token to the request cookies
-axiosInstance.interceptors.request.use((config) => {
-    const accessToken = document.cookie.split("; ").find(row => row.startsWith("accessToken="))?.split("=")[1];
-    if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
-    }
-    const refreshToken = document.cookie.split("; ").find(row => row.startsWith("refreshToken="))?.split("=")[1];
-    if (refreshToken) {
-        config.headers.RefreshToken = `Bearer ${refreshToken}`;
-    }
-    return config;
-});
+// The request interceptor is no longer needed as credentials (cookies) are handled by the browser.
+
  // Intercepteur pour gérer le rafraîchissement automatique du token
 axiosInstance.interceptors.response.use(
     (response) => response,
@@ -29,19 +19,11 @@ axiosInstance.interceptors.response.use(
             originalRequest._retry = true;
 
             try {
-                const refreshToken = document.cookie.split("; ").find(row => row.startsWith("refreshToken="))?.split("=")[1];
-                if (refreshToken) {
-                    const response = await axiosInstance.post("/auth/refresh", {
-                        refreshToken: refreshToken
-                    }, {
-                        withCredentials: true
-                    });
-                    if (response.status === 200) {
-                        const accessToken = response.data.accessToken;
-                        document.cookie = `accessToken=${accessToken}; path=/`;
-                        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-                        return axiosInstance(originalRequest);
-                    }
+                const response = await axiosInstance.post("/auth/refresh", {}, {
+                    withCredentials: true
+                });
+                if (response.status === 200) {
+                    return axiosInstance(originalRequest);
                 }
             } catch (refreshError) {
                 console.error("Erreur lors du rafraîchissement du token:", refreshError);
