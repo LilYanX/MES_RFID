@@ -12,5 +12,6 @@ async def get_historic():
             "uuid": doc["uuid"],
             "step": doc["step_name"],
             "date": doc["timestamp"],
+            "reference": doc.get("reference")
         })
     return {"historic": result}

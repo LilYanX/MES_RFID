@@ -6,7 +6,7 @@ import ArticleDetails from "./components/ArticleDetails";
 
 // Types
 interface Article {
-  uuid: string;
+  ref: string;
   type: string;
   color: string;
   size: string;
@@ -21,6 +21,7 @@ interface Article {
 }
 interface RfidEvent {
   uuid: string;
+  ref: string;
   step_id: number;
   step_name: string;
   reader_type: string;
@@ -30,7 +31,7 @@ interface RfidEvent {
 
 // Données mock pour démo
 const mockArticle: Article = {
-  uuid: "78CBBC9E",
+  ref: "78CBBC9E",
   type: "Pantalon",
   color: "Bleu marine",
   size: "L",
@@ -46,6 +47,7 @@ const mockArticle: Article = {
 const mockEvents: RfidEvent[] = [
   {
     uuid: "78CBBC9E",
+    ref: "...",
     step_id: 1,
     step_name: "Collection & Intake",
     reader_type: "Handheld Writer",
@@ -54,6 +56,7 @@ const mockEvents: RfidEvent[] = [
   },
   {
     uuid: "78CBBC9E",
+    ref: "...",
     step_id: 2,
     step_name: "Washing",
     reader_type: "Tunnel",
@@ -62,6 +65,7 @@ const mockEvents: RfidEvent[] = [
   },
   {
     uuid: "78CBBC9E",
+    ref: "...",
     step_id: 3,
     step_name: "Drying",
     reader_type: "Tunnel",
@@ -85,14 +89,17 @@ export default function ArticlesPage() {
       try {
         const res = await fetch("http://localhost:8000/api/articles");
         const data = await res.json();
+        let articlesArray = [];
         if (Array.isArray(data)) {
-          setArticles(data);
+          articlesArray = data;
         } else if (Array.isArray(data.articles)) {
-          setArticles(data.articles);
+          articlesArray = data.articles;
         } else {
-          setArticles([]);
+          articlesArray = [];
           console.error('Réponse inattendue de /api/articles:', data);
         }
+        // Mapping pour garantir le champ 'ref'
+        setArticles(articlesArray.map((a: any) => ({ ...a, ref: a.ref || a.reference || "" })));
       } catch (e) {
         setArticles([]);
       }
@@ -103,25 +110,17 @@ export default function ArticlesPage() {
   // Recherche et affichage détail/historique
 
   // Filtrage articles selon la recherche
-  const filteredArticles = articles.filter(a => a.uuid.toLowerCase().includes(search.toLowerCase()));
+  const filteredArticles = articles.filter((a: any) => (a.ref || "").toLowerCase().includes(search.toLowerCase()));
 
-  const fetchData = async (uuid: string) => {
+  const fetchData = async (reference: string) => {
     setLoading(true);
     setError("");
     try {
-      // Remplace par tes vrais endpoints si dispo
-      // const aRes = await fetch(`/api/articles/${uuid}`);
-      // const eRes = await fetch(`/api/rfid_events/${uuid}`);
-      // const article = await aRes.json();
-      // const events = await eRes.json();
-      // setArticle(article);
-      // setEvents(events);
-      // Appels réels backend
-      const aRes = await fetch(`http://localhost:8000/api/articles/${uuid}`);
+      const aRes = await fetch(`http://localhost:8000/api/articles/${reference}`);
       if (!aRes.ok) throw new Error('Article non trouvé');
       const article = await aRes.json();
-      setArticle(article);
-      const eRes = await fetch(`http://localhost:8000/api/rfid_events/${uuid}`);
+      setArticle({ ...article, ref: article.ref || article.reference || "" });
+      const eRes = await fetch(`http://localhost:8000/api/rfid_events/${reference}`);
       const events = await eRes.json();
       setEvents(Array.isArray(events) ? events : []);
     } catch (e) {
@@ -135,14 +134,14 @@ export default function ArticlesPage() {
 
   // Pour la démo, charge le mock par défaut
   useEffect(() => {
-    fetchData("78CBBC9E");
+    fetchData("ASELVEXIDH");
   }, []);
 
   return (
     <div className="p-8">
       <h2 className="text-3xl font-bold mb-6">Liste des articles (UUID)</h2>
       <ArticleSearchBar search={search} setSearch={setSearch} />
-      <ArticlesTable articles={filteredArticles} onSelect={(uuid) => { setUuid(uuid); fetchData(uuid); }} />
+      <ArticlesTable articles={filteredArticles} onSelect={(ref) => { setUuid(ref); fetchData(ref); }} />
       {loading ? (
         <p>Chargement...</p>
       ) : error ? (

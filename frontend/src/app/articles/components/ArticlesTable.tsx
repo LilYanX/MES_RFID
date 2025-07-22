@@ -1,7 +1,7 @@
 import React from "react";
 
 interface Article {
-  uuid: string;
+  ref: string;
   type: string;
   color: string;
   size: string;
@@ -15,13 +15,13 @@ interface Article {
   notes: string;
 }
 
-export default function ArticlesTable({ articles, onSelect }: { articles: Article[]; onSelect: (uuid: string) => void }) {
+export default function ArticlesTable({ articles, onSelect }: { articles: Article[]; onSelect: (ref: string) => void }) {
   return (
     <div className="bg-white rounded-xl shadow p-6 mb-8">
       <table className="min-w-full text-center">
         <thead>
           <tr className="bg-gray-100">
-            <th className="py-2 px-4">UUID</th>
+            <th className="py-2 px-4">Référence</th>
             <th className="py-2 px-4">Type</th>
             <th className="py-2 px-4">Couleur</th>
             <th className="py-2 px-4">Taille</th>
@@ -36,13 +36,13 @@ export default function ArticlesTable({ articles, onSelect }: { articles: Articl
             </tr>
           ) : (
             articles.map((a) => (
-              <tr key={a.uuid} className="border-t hover:bg-gray-50">
+              <tr key={a.ref} className="border-t hover:bg-gray-50">
                 <td className="py-2 px-4">
                   <button
                     className="text-blue-600 underline"
-                    onClick={() => onSelect(a.uuid)}
+                    onClick={() => onSelect(a.ref)}
                   >
-                    {a.uuid}
+                    {a.ref}
                   </button>
                 </td>
                 <td className="py-2 px-4">{a.type}</td>
@@ -52,7 +52,7 @@ export default function ArticlesTable({ articles, onSelect }: { articles: Articl
                 <td className="py-2 px-4">
                   <button
                     className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
-                    onClick={() => onSelect(a.uuid)}
+                    onClick={() => onSelect(a.ref)}
                   >
                     Voir détail
                   </button>

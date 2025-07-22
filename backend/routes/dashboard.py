@@ -18,6 +18,7 @@ def get_articles_in_process():
         {
             "$group": {
                 "_id": "$uuid",
+                "reference": {"$first": "$reference"},
                 "latest_step_id": {"$first": "$step_id"},
                 "latest_step_name": {"$first": "$step_name"},
                 "last_seen": {"$first": "$timestamp"}

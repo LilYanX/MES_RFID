@@ -1,7 +1,7 @@
 import React from "react";
 
 interface Article {
-  uuid: string;
+  ref: string;
   type: string;
   color: string;
   size: string;
@@ -16,6 +16,7 @@ interface Article {
 }
 interface RfidEvent {
   uuid: string;
+  ref: string;
   step_id: number;
   step_name: string;
   reader_type: string;
@@ -28,7 +29,7 @@ export default function ArticleDetails({ article, events }: { article: Article; 
     <div className="bg-white rounded-xl shadow p-6 mb-8">
       <h3 className="text-xl font-semibold mb-2">Fiche article</h3>
       <div className="grid grid-cols-2 gap-4 mb-4">
-        <div><span className="font-semibold">UUID :</span> {article.uuid}</div>
+        <div><span className="font-semibold">Reference :</span> {article.ref}</div>
         <div><span className="font-semibold">Type :</span> {article.type}</div>
         <div><span className="font-semibold">Couleur :</span> {article.color}</div>
         <div><span className="font-semibold">Taille :</span> {article.size}</div>
@@ -43,6 +44,7 @@ export default function ArticleDetails({ article, events }: { article: Article; 
       <table className="min-w-full text-center">
         <thead>
           <tr className="bg-gray-100">
+            <th className="py-2 px-4">UUID</th>
             <th className="py-2 px-4">Étape</th>
             <th className="py-2 px-4">Type lecteur</th>
             <th className="py-2 px-4">Opérateur</th>
@@ -52,6 +54,7 @@ export default function ArticleDetails({ article, events }: { article: Article; 
         <tbody>
           {events.map((event, idx) => (
             <tr key={idx} className="border-t">
+              <td className="py-2 px-4">{event.uuid}</td>
               <td className="py-2 px-4">{event.step_name}</td>
               <td className="py-2 px-4">{event.reader_type}</td>
               <td className="py-2 px-4">{event.operator}</td>
