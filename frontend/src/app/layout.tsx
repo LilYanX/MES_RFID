@@ -45,6 +45,14 @@ function ArticleIcon(props: React.ComponentProps<'svg'>) {
 function SettingsIcon(props: any) {
   return <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-1.14 1.952-1.14 2.252 0a1.724 1.724 0 002.573 1.01c.987-.57 2.18.623 1.61 1.61a1.724 1.724 0 001.01 2.573c1.14.3 1.14 1.952 0 2.252a1.724 1.724 0 00-1.01 2.573c.57.987-.623 2.18-1.61 1.61a1.724 1.724 0 00-2.573 1.01c-.3 1.14-1.952 1.14-2.252 0a1.724 1.724 0 00-2.573-1.01c-.987.57-2.18-.623-1.61-1.61a1.724 1.724 0 00-1.01-2.573c-1.14-.3-1.14-1.952 0-2.252a1.724 1.724 0 001.01-2.573c-.57-.987.623-2.18 1.61-1.61a1.724 1.724 0 002.573-1.01z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>;
 }
+// Icône Maintenance
+function MaintenanceIcon(props: React.ComponentProps<'svg'>) {
+  return (
+    <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 3a.75.75 0 01.75.75V5h3V3.75a.75.75 0 111.5 0V5h.25A2.75 2.75 0 0121 7.75v8.5A2.75 2.75 0 0118.25 19h-12.5A2.75 2.75 0 013 16.25v-8.5A2.75 2.75 0 015.75 5H6V3.75a.75.75 0 111.5 0V5h3V3.75A.75.75 0 019.75 3zm8.25 4.75a1.25 1.25 0 00-1.25-1.25h-12.5A1.25 1.25 0 003 7.75v8.5A1.25 1.25 0 004.25 17.5h12.5A1.25 1.25 0 0018 16.25v-8.5z" />
+    </svg>
+  );
+}
 // ---- Fin composants menu ----
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -63,7 +71,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <MenuLink href="/steps" icon={StepsIcon}>Steps</MenuLink>
             <MenuLink href="/stats" icon={StatsIcon}>Statistics</MenuLink>
             <MenuLink href="/articles" icon={ArticleIcon}>Articles</MenuLink>
+            <MenuLink href="/maintenance" icon={MaintenanceIcon}>Maintenance</MenuLink>
             <MenuLink href="/settings" icon={SettingsIcon}>Settings</MenuLink>
+
           </nav>
         </aside>
         <main className="flex-1 p-8">
