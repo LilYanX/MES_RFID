@@ -12,16 +12,20 @@ from fastapi.responses import JSONResponse
 import uuid
 
 def generateTokens(user):
+    access_secret = os.getenv("JWT_ACCESS_SECRET")
+    refresh_secret = os.getenv("JWT_REFRESH_SECRET")
+    if not access_secret or not refresh_secret:
+        raise RuntimeError("JWT secrets are not set in environment variables.")
     accessToken = jwt.encode({
         "user": { "uuid": user["uuid"], "role": user["role"] },
         "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=6)
-    }, os.getenv("JWT_ACCESS_SECRET"), algorithm="HS256")
+    }, access_secret, algorithm="HS256")
 
     refreshToken = jwt.encode(
         { 
             "user": { "uuid": user["uuid"], "role": user["role"] },
         "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=7)
-    }, os.getenv("JWT_REFRESH_SECRET"), algorithm="HS256")
+    }, refresh_secret, algorithm="HS256")
 
     return { "accessToken": accessToken, "refreshToken": refreshToken }
 
@@ -136,37 +140,51 @@ async def refresh(request: Request):
     try:
         refreshToken = request.cookies.get("refreshToken")
         if not refreshToken:
-            raise HTTPException(status_code=401, detail="Refresh token not found")
+            raise HTTPException(status_code=401, detail="Refresh token cookie not found")
 
-        decoded_token = jwt.decode(refreshToken, os.getenv("JWT_REFRESH_SECRET"), algorithms=["HS256"])
+        refresh_secret = os.getenv("JWT_REFRESH_SECRET")
+        if not refresh_secret:
+            raise RuntimeError("JWT_REFRESH_SECRET is not set in environment variables.")
+        
+        decoded_token = jwt.decode(refreshToken, refresh_secret, algorithms=["HS256"])
         if not decoded_token or "user" not in decoded_token:
             raise HTTPException(status_code=401, detail="Invalid refresh token")
         
         user_data = decoded_token["user"]
-        
-        # Vous pouvez ajouter une vérification ici pour s'assurer que l'utilisateur existe toujours en base
-        
         tokens = generateTokens(user_data)
         
-        response = JSONResponse(content={
-            "message": "Token refreshed",
-            "accessToken": tokens["accessToken"]
-        })
+        response = JSONResponse(content={"message": "Token refreshed successfully"})
         
         response.set_cookie(
             key="accessToken",
             value=tokens["accessToken"],
             httponly=True,
-            secure=False,  
+            secure=False,
             samesite="strict",
             max_age=6*60*60
         )
+        # Also rotate the refresh token for better security
+        response.set_cookie(
+            key="refreshToken",
+            value=tokens["refreshToken"],
+            httponly=True,
+            secure=False,
+            samesite="strict",
+            max_age=7*24*60*60
+        )
         
         return response
+
     except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Refresh token has expired")
+        response = JSONResponse(status_code=401, content={"detail": "Refresh token expired"})
+        response.delete_cookie("accessToken")
+        response.delete_cookie("refreshToken")
+        return response
     except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid refresh token")
+        response = JSONResponse(status_code=401, content={"detail": "Invalid refresh token"})
+        response.delete_cookie("accessToken")
+        response.delete_cookie("refreshToken")
+        return response
 
 
 # get user info

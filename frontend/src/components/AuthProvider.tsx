@@ -11,6 +11,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const [loading, setLoading] = useState(true);
   const [isClient, setIsClient] = useState(false);
   const [triedFetch, setTriedFetch] = useState(false);
+  const [refreshTried, setRefreshTried] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const isLoginPage = pathname === "/login";
@@ -22,25 +23,26 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     if (!isClient || triedFetch) return;
     setTriedFetch(true);
-    // Appelle le backend pour récupérer l'utilisateur courant
+
     axios.get("/auth/users/me")
       .then(res => {
-        console.log("[AuthProvider] Utilisateur courant récupéré:", res.data);
         dispatch(setUser(res.data));
       })
       .catch(err => {
-        console.warn("[AuthProvider] Aucun utilisateur courant (non authentifié)");
         dispatch(setUser(null));
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        setRefreshTried(true);
+      });
   }, [isClient, dispatch, triedFetch]);
 
   useEffect(() => {
-    if (!loading && (!user || Object.keys(user).length === 0) && isClient && !isLoginPage) {
-      console.log("[AuthProvider] Redirection vers /login car user absent ou vide");
+    if (!loading && refreshTried && (!user || Object.keys(user).length === 0) && isClient && !isLoginPage) {
+      console.log("[AuthProvider] Redirection vers /login car user absent ou vide après refresh éventuel");
       router.replace("/login");
     }
-  }, [loading, user, router, isClient, isLoginPage]);
+  }, [loading, refreshTried, user, router, isClient, isLoginPage]);
 
   if (isLoginPage) return <>{children}</>;
   if (!isClient || loading) return null;

@@ -15,20 +15,20 @@ axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
-        if (error.response.status === 401 && !originalRequest._retry) {
+        // Ajout d'une condition pour ne pas intercepter l'échec du refresh lui-même
+        if (error.response?.status === 401 && originalRequest.url !== '/auth/refresh' && !originalRequest._retry) {
             originalRequest._retry = true;
-
             try {
-                const response = await axiosInstance.post("/auth/refresh", {}, {
-                    withCredentials: true
-                });
-                if (response.status === 200) {
-                    return axiosInstance(originalRequest);
-                }
+                // Tente de rafraîchir le token sans envoyer de données,
+                // le refreshToken HttpOnly sera envoyé automatiquement par le navigateur.
+                await axiosInstance.post("/auth/refresh");
+                // Si le refresh réussit, la requête originale est relancée avec le nouvel accessToken.
+                return axiosInstance(originalRequest);
             } catch (refreshError) {
-                console.error("Erreur lors du rafraîchissement du token:", refreshError);
-                // Rediriger vers la page de connexion si le token est invalide
+                // Si le refresh échoue, on redirige vers le login.
+                console.error("Impossible de rafraîchir le token:", refreshError);
                 window.location.href = "/login";
+                return Promise.reject(refreshError);
             }
         }
         return Promise.reject(error);
