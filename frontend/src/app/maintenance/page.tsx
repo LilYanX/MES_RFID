@@ -8,7 +8,7 @@ interface Portal {
   name: string;
   etape: string;
   ip: string;
-  etat: string;
+  etat: "online" | "maintenance" | "offline";
   last_activity: string | null;
   type: string;
   firmware: string;
@@ -17,57 +17,80 @@ interface Portal {
 }
 
 const fetchPortals = async (): Promise<Portal[]> => {
-  const res = await fetch("http://localhost:8000/api/portals");
-  if (!res.ok) throw new Error("Erreur lors du chargement des portails");
-  return res.json();
+  try {
+    const res = await fetch("http://localhost:8000/api/portals");
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Erreur lors du chargement des portails:", error);
+    throw error;
+  }
 };
 
 export default function MaintenancePage() {
   const [portals, setPortals] = useState<Portal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchPortals()
-      .then((data) => {
-        setPortals(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
-  }, []);
-
-  // Sélectionner par défaut le portail d'étape 1
   const [selectedPortal, setSelectedPortal] = useState<Portal | null>(null);
+
   useEffect(() => {
-    if (!loading && portals.length > 0) {
-      const portal1 = portals.find(p => parseInt(p.etape) === 1) || portals[0];
-      setSelectedPortal(portal1);
-    }
-    // eslint-disable-next-line
-  }, [loading, portals.length]);
+    const loadPortals = async () => {
+      try {
+        const data = await fetchPortals();
+        setPortals(data);
+        if (data.length > 0) {
+          const portal1 = data.find(p => parseInt(p.etape) === 1) || data[0];
+          setSelectedPortal(portal1);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPortals();
+  }, []);
 
   if (loading) return <div>Chargement...</div>;
   if (error) return <div>Erreur : {error}</div>;
 
   // Trier les portails par numéro d'étape croissant (etape peut contenir du texte, on prend le début numérique)
-  const getStepNumber = (etape: string) => parseInt(etape.match(/\d+/)?.[0] || "0");
+  const getStepNumber = (etape: string): number => {
+    const match = etape.match(/\d+/);
+    return match ? parseInt(match[0]) : 0;
+  };
   const sortedPortals = [...portals].sort((a, b) => getStepNumber(a.etape) - getStepNumber(b.etape));
 
   // Couleur selon état
-  const getStateColor = (etat: string) => {
-    if (etat === "online") return "bg-green-400 border-green-700";
-    if (etat === "maintenance") return "bg-orange-300 border-orange-600";
-    return "bg-red-300 border-red-600";
+  const getStateColor = (etat: Portal["etat"]) => {
+    switch (etat) {
+      case "online":
+        return "bg-green-400 border-green-700";
+      case "maintenance":
+        return "bg-orange-300 border-orange-600";
+      case "offline":
+        return "bg-red-300 border-red-600";
+      default:
+        return "bg-gray-300 border-gray-600";
+    }
   };
 
   // Icône selon état
-  const getStateIcon = (etat: string) => {
-    if (etat === "online") return "🟢";
-    if (etat === "maintenance") return "🟠";
-    return "🔴";
+  const getStateIcon = (etat: Portal["etat"]) => {
+    switch (etat) {
+      case "online":
+        return "🟢";
+      case "maintenance":
+        return "🟠";
+      case "offline":
+        return "🔴";
+      default:
+        return "❓";
+    }
   };
 
   // Handlers pour les actions
