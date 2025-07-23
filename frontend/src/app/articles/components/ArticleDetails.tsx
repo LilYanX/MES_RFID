@@ -1,7 +1,7 @@
 import React from "react";
 
 interface Article {
-  ref: string;
+  name: string;
   type: string;
   color: string;
   size: string;
@@ -13,10 +13,12 @@ interface Article {
   dispatch_zone: string;
   quality_requirements: string;
   notes: string;
+  sales_price_ron?: number;
+  length_cm?: number;
+  hight_cm?: number;
 }
 interface RfidEvent {
   uuid: string;
-  ref: string;
   step_id: number;
   step_name: string;
   reader_type: string;
@@ -25,15 +27,19 @@ interface RfidEvent {
 }
 
 export default function ArticleDetails({ article, events }: { article: Article; events: RfidEvent[] }) {
+  console.log('RFID events reçus pour cet article:', events);
   return (
     <div className="bg-white rounded-xl shadow p-6 mb-8">
       <h3 className="text-xl font-semibold mb-2">Fiche article</h3>
       <div className="grid grid-cols-2 gap-4 mb-4">
-        <div><span className="font-semibold">Reference :</span> {article.ref}</div>
+        <div><span className="font-semibold">Name :</span> {article.name}</div>
         <div><span className="font-semibold">Type :</span> {article.type}</div>
         <div><span className="font-semibold">Couleur :</span> {article.color}</div>
         <div><span className="font-semibold">Taille :</span> {article.size}</div>
         <div><span className="font-semibold">Matière :</span> {article.material}</div>
+        <div><span className="font-semibold">Prix de vente (RON) :</span> {article.sales_price_ron ?? '-'}</div>
+        <div><span className="font-semibold">Longueur (cm) :</span> {article.length_cm ?? '-'}</div>
+        <div><span className="font-semibold">Hauteur (cm) :</span> {article.hight_cm ?? '-'}</div>
         <div><span className="font-semibold">Pré-traitement :</span> {article.pre_treatment}</div>
         <div><span className="font-semibold">Étiquette entretien :</span> {article.care_label}</div>
         <div><span className="font-semibold">Zone dispatch :</span> {article.dispatch_zone}</div>

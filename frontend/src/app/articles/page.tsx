@@ -6,7 +6,7 @@ import ArticleDetails from "./components/ArticleDetails";
 
 // Types
 interface Article {
-  ref: string;
+  name: string;
   type: string;
   color: string;
   size: string;
@@ -18,6 +18,9 @@ interface Article {
   dispatch_zone: string;
   quality_requirements: string;
   notes: string;
+  sales_price_ron?: number;
+  length_cm?: number;
+  hight_cm?: number;
 }
 interface RfidEvent {
   uuid: string;
@@ -31,7 +34,7 @@ interface RfidEvent {
 
 // Données mock pour démo
 const mockArticle: Article = {
-  ref: "78CBBC9E",
+  name: "Pantalon bleu",
   type: "Pantalon",
   color: "Bleu marine",
   size: "L",
@@ -42,7 +45,10 @@ const mockArticle: Article = {
   care_label: "Lavage à 40°C, ne pas blanchir",
   dispatch_zone: "Nord",
   quality_requirements: "Inspection visuelle, vérification couture",
-  notes: "Article fragile, éviter surcharges"
+  notes: "Article fragile, éviter surcharges",
+  sales_price_ron: 99.99,
+  length_cm: 110,
+  hight_cm: 80
 };
 const mockEvents: RfidEvent[] = [
   {
@@ -99,7 +105,7 @@ export default function ArticlesPage() {
           console.error('Réponse inattendue de /api/articles:', data);
         }
         // Mapping pour garantir le champ 'ref'
-        setArticles(articlesArray.map((a: any) => ({ ...a, ref: a.ref || a.reference || "" })));
+        setArticles(articlesArray.map((a: any) => ({ ...a, name: a.name || a.reference || "" })));
       } catch (e) {
         setArticles([]);
       }
@@ -110,17 +116,17 @@ export default function ArticlesPage() {
   // Recherche et affichage détail/historique
 
   // Filtrage articles selon la recherche
-  const filteredArticles = articles.filter((a: any) => (a.ref || "").toLowerCase().includes(search.toLowerCase()));
+  const filteredArticles = articles.filter((a: any) => (a.name || "").toLowerCase().includes(search.toLowerCase()));
 
-  const fetchData = async (reference: string) => {
+  const fetchData = async (name: string) => {
     setLoading(true);
     setError("");
     try {
-      const aRes = await fetch(`http://localhost:8000/api/articles/${reference}`);
+      const aRes = await fetch(`http://localhost:8000/api/articles/${name}`);
       if (!aRes.ok) throw new Error('Article non trouvé');
       const article = await aRes.json();
-      setArticle({ ...article, ref: article.ref || article.reference || "" });
-      const eRes = await fetch(`http://localhost:8000/api/rfid_events/${reference}`);
+      setArticle(article);
+      const eRes = await fetch(`http://localhost:8000/api/rfid_events/${name}`);
       const events = await eRes.json();
       setEvents(Array.isArray(events) ? events : []);
     } catch (e) {
@@ -134,14 +140,14 @@ export default function ArticlesPage() {
 
   // Pour la démo, charge le mock par défaut
   useEffect(() => {
-    fetchData("ASELVEXIDH");
+    fetchData("Work pants");
   }, []);
 
   return (
     <div className="p-8">
       <h2 className="text-3xl font-bold mb-6">Liste des articles (UUID)</h2>
       <ArticleSearchBar search={search} setSearch={setSearch} />
-      <ArticlesTable articles={filteredArticles} onSelect={(ref) => { setUuid(ref); fetchData(ref); }} />
+      <ArticlesTable articles={filteredArticles} onSelect={(name) => { setUuid(name); fetchData(name); }} />
       {loading ? (
         <p>Chargement...</p>
       ) : error ? (

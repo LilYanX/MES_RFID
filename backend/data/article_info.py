@@ -1,41 +1,47 @@
-# seed_info.py
 from pymongo import MongoClient
+from pymongo.server_api import ServerApi
+from bson import ObjectId
 
-client = MongoClient("mongodb+srv://...")
+# Connexion MongoDB
+uri = "mongodb+srv://admin:G0%40tDesEchecs@dbrfid.ojrspq8.mongodb.net/?retryWrites=true&w=majority&appName=DBRFID"
+client = MongoClient(uri, server_api=ServerApi('1'))
 db = client["mes_rfid"]
+articles_collection = db["articles"]
 
-articles = [
+# Données à mettre à jour
+updates = [
     {
-        "uuid": "78CBBC9E",
-        "type": "Chemise",
-        "color": "Blanc",
-        "material": "Coton",
-        "size": "M",
-        "wash_time": "12 min",
-        "dry_time": "20 min",
-        "nomenclature": "Program standard A"
+        "_id": ObjectId("68751be8ac60676fbcdadaba"),
+        "name": "Work pants",
+        "sales_price_ron": 89.99,
+        "length_cm": 110,
+        "hight_cm": 90,
+        "quantity": 1
     },
     {
-        "uuid": "8DA8DDBD",
-        "type": "Pantalon",
-        "color": "Bleu marine",
-        "material": "Polyester",
-        "size": "L",
-        "wash_time": "15 min",
-        "dry_time": "25 min",
-        "nomenclature": "Program renforcé B"
+        "_id": ObjectId("68751be8ac60676fbcdadabb"),
+        "name": "Medical gown",
+        "sales_price_ron": 59.49,
+        "length_cm": 95,
+        "hight_cm": 85,
+        "quantity": 1
     },
     {
-        "uuid": "56A99065",
-        "type": "Blouse médicale",
-        "color": "Vert",
-        "material": "Mélange coton-polyester",
-        "size": "S",
-        "wash_time": "18 min",
-        "dry_time": "30 min",
-        "nomenclature": "Program hygiène C"
+        "_id": ObjectId("68751be8ac60676fbcdadabc"),
+        "name": "Hospital sheet",
+        "sales_price_ron": 129.00,
+        "length_cm": 240,
+        "hight_cm": 150,
+        "quantity": 1
     }
 ]
 
-db["article_info"].insert_many(articles)
-print("Infos articles insérées.")
+# Mise à jour dans la base
+for update in updates:
+    article_id = update.pop("_id")
+    articles_collection.update_one(
+        {"_id": article_id},
+        {"$set": update}
+    )
+
+print("✅ Mise à jour terminée.")
