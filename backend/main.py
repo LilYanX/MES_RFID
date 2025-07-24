@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes import article_info, dashboard, historic, inventory, steps, statistics, articles
 from OAuth_service.routes.OAuthRoutes import router as OAuthRoutes
+from Inventory_service.routes.InventoryRoutes import router as InventoryRoutes
 
 app = FastAPI(
     title="MES RFID API",
@@ -28,6 +29,9 @@ app.include_router(articles.router, prefix="/api")
 
 #OAuth-service
 app.include_router(OAuthRoutes, prefix="/api/auth", tags=["Users"])
+
+#Inventory-service
+app.include_router(InventoryRoutes, prefix="/api/inventory", tags=["Inventory"])
 
 
 @app.get("/", tags=["Home"])
