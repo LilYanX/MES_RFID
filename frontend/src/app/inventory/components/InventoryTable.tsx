@@ -1,38 +1,50 @@
 import React from "react";
 
-interface Article {
+interface InventoryItem {
+  reference: string;
   uuid: string;
-  status: string;
-  lastSeen: string;
+  step_name: string;
 }
 
-export default function InventoryTable({ inventory }: { inventory: Article[] }) {
+export default function InventoryTable({ inventory }: { inventory: InventoryItem[] }) {
   return (
-    <div className="bg-white rounded-xl shadow p-6">
-      <table className="min-w-full text-center">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="py-2 px-4">UUID</th>
-            <th className="py-2 px-4">Statut</th>
-            <th className="py-2 px-4">Dernier scan</th>
-          </tr>
-        </thead>
-        <tbody>
-          {inventory.length === 0 ? (
-            <tr>
-              <td colSpan={3} className="py-4 text-gray-400">Aucun article en inventaire.</td>
+    <>
+      <div className="bg-white rounded-xl shadow p-6 overflow-x-auto">
+        <table className="min-w-full text-center">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="py-2 px-4">Reference</th>
+              <th className="py-2 px-4">UUID</th>
+              <th className="py-2 px-4">Step</th>
             </tr>
-          ) : (
-            inventory.map((item, idx) => (
-              <tr key={item.uuid + idx} className="border-t hover:bg-gray-50">
-                <td className="py-2 px-4">{item.uuid}</td>
-                <td className="py-2 px-4">{item.status}</td>
-                <td className="py-2 px-4">{new Date(item.lastSeen).toLocaleString()}</td>
+          </thead>
+          <tbody>
+            {inventory.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="py-4 text-gray-400">No article in inventory.</td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-    </div>
+            ) : (
+              <>
+                {inventory
+                  .filter(item => item && item.reference && item.uuid && item.step_name)
+                  .map((item, idx) => (
+                    <tr key={item.uuid + idx} className="border-t hover:bg-gray-50">
+                      <td className="py-2 px-4">{item.reference}</td>
+                      <td className="py-2 px-4">{item.uuid}</td>
+                      <td className="py-2 px-4">{item.step_name}</td>
+                    </tr>
+                  ))}
+                <tr>
+                  <td colSpan={3} className="py-2 px-4 font-semibold dark:text-blue-300 bg-gray-100 dark:bg-gray-800 text-right border-t hover:bg-gray-50">
+                    Total: {inventory.length} lignes
+                  </td>
+                </tr>
+              </>
+            )}
+          </tbody>
+        </table>
+      </div>
+      
+    </>
   );
 } 
