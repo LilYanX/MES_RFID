@@ -57,7 +57,7 @@ function MaintenanceIcon(props: React.ComponentProps<'svg'>) {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr">
+    <html lang="en">
       <body className="flex min-h-screen bg-gray-100 text-gray-900">
         <aside className="w-64 bg-white shadow-lg p-4 space-y-4">
           <h1 className="text-2xl font-extrabold text-blue-700 flex items-center gap-2">

@@ -35,7 +35,7 @@ const mockSteps: Step[] = [
   },
 ];
 
-export default function EtapesPage() {
+export default function StepsPage() {
   const [steps, setSteps] = useState<Step[]>([]);
   const [loading, setLoading] = useState(true);
   const [newStep, setNewStep] = useState("");
@@ -69,7 +69,7 @@ export default function EtapesPage() {
       setSteps([...(steps as Step[]), data]);
       setNewStep("");
     } catch (e) {
-      alert("Erreur lors de l'ajout de l'étape");
+      alert("Error adding step");
     }
   };
 
@@ -78,15 +78,15 @@ export default function EtapesPage() {
       await fetch(`http://localhost:8000/api/steps/${step_id}`, { method: "DELETE" });
       setSteps((steps as Step[]).filter((s) => s.step_id !== step_id));
     } catch (e) {
-      alert("Erreur lors de la suppression de l'étape");
+      alert("Error deleting step");
     }
   };
 
   return (
     <main className="p-8">
-      <h2 className="text-3xl font-bold mb-6">Étapes du Processus</h2>
+      <h2 className="text-3xl font-bold mb-6">Process Steps</h2>
       {loading ? (
-        <p>Chargement...</p>
+        <p>Loading...</p>
       ) : (
         <>
           <StepAddBar newStep={newStep} setNewStep={setNewStep} onAdd={addStep} />

@@ -6,7 +6,7 @@ export default function ArticleSearchBar({ search, setSearch }: { search: string
       <input
         type="text"
         className="border rounded-lg px-3 py-2 flex-1"
-        placeholder="Rechercher par UUID..."
+        placeholder="Search by UUID..."
         value={search}
         onChange={e => setSearch(e.target.value)}
       />

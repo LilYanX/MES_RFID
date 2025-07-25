@@ -6,7 +6,7 @@ export default function StepAddBar({ newStep, setNewStep, onAdd }: { newStep: st
       <input
         type="text"
         className="border rounded-lg px-3 py-2 flex-1"
-        placeholder="Nouvelle étape..."
+        placeholder="New step..."
         value={newStep}
         onChange={e => setNewStep(e.target.value)}
         onKeyDown={e => { if (e.key === "Enter") onAdd(); }}
@@ -15,7 +15,7 @@ export default function StepAddBar({ newStep, setNewStep, onAdd }: { newStep: st
         className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
         onClick={onAdd}
       >
-        Ajouter
+        Add
       </button>
     </div>
   );

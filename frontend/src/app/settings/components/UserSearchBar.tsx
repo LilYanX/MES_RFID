@@ -6,7 +6,7 @@ export default function UserSearchBar({ search, setSearch }: { search: string; s
       <input
         type="text"
         className="border rounded-lg px-3 py-2 flex-1"
-        placeholder="Rechercher par nom, prénom, email..."
+        placeholder="Search by name, first name, email..."
         value={search}
         onChange={e => setSearch(e.target.value)}
       />

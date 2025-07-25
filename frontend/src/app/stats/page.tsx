@@ -150,7 +150,7 @@ export default function StatsPage() {
       const data = await res.json();
       setStats(data);
     } catch (error) {
-      console.error("Erreur lors du chargement des statistiques:", error);
+      console.error("Error loading statistics:", error);
       setStats(mockStats);
     } finally {
       setLoading(false);
@@ -161,13 +161,13 @@ export default function StatsPage() {
     loadStats();
   }, []);
 
-  if (loading) return <div className="text-center p-8">Chargement...</div>;
+  if (loading) return <div className="text-center p-8">Loading...</div>;
 
-  if (!stats) return <div className="text-center p-8">Erreur de chargement</div>;
+  if (!stats) return <div className="text-center p-8">Loading error</div>;
 
   return (
     <main className="p-8">
-      <h2 className="text-3xl font-bold mb-6">Statistiques</h2>
+      <h2 className="text-3xl font-bold mb-6">Statistics</h2>
 
       {/* KPIs */}
       <StatsCards
@@ -180,7 +180,7 @@ export default function StatsPage() {
 
       {/* Table des alertes */}
       <div className="bg-white rounded-xl shadow p-6 mt-8">
-        <h3 className="text-lg font-semibold mb-4">Alertes actives</h3>
+        <h3 className="text-lg font-semibold mb-4">Active alerts</h3>
         <StatsTable data={{
           type: "readRates",
           items: stats.portal_status.read_rates.map((item) => ({
@@ -192,7 +192,7 @@ export default function StatsPage() {
 
       {/* Table des articles par étape */}
       <div className="bg-white rounded-xl shadow p-6 mt-8">
-        <h3 className="text-lg font-semibold mb-4">Articles par étape</h3>
+        <h3 className="text-lg font-semibold mb-4">Articles by step</h3>
         <StatsTable data={{
           type: "articles",
           items: Object.entries(stats.article_tracking.articles_by_step).map(([step, count]) => ({
@@ -204,7 +204,7 @@ export default function StatsPage() {
 
       {/* Graphique circulaire des articles par étape avec légendes */}
       <div className="bg-white rounded-xl shadow p-6 mt-8">
-        <h3 className="text-lg font-semibold mb-6 text-center">Répartition des articles par étape</h3>
+        <h3 className="text-lg font-semibold mb-6 text-center">Article distribution by step</h3>
         <div className="flex items-center justify-center gap-8">
           {/* Graphique */}
           <div className="relative">
@@ -317,7 +317,7 @@ export default function StatsPage() {
           
           {/* Légende */}
           <div className="flex flex-col gap-3">
-            <h4 className="font-semibold text-gray-700 mb-2">Étapes du processus</h4>
+            <h4 className="font-semibold text-gray-700 mb-2">Process steps</h4>
             {Object.entries(stats.article_tracking.articles_by_step).map(([step, count], index) => {
               const total = Object.values(stats.article_tracking.articles_by_step).reduce((a, b) => a + b, 0);
               const percentage = ((count / total) * 100).toFixed(1);

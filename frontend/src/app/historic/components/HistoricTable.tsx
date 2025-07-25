@@ -14,9 +14,9 @@ export default function HistoricTable({ scans }: { scans: Scan[] }) {
         <thead>
           <tr className="bg-gray-100">
             <th className="py-2 px-4">UUID</th>
-            <th className="py-2 px-4">Référence</th>
-            <th className="py-2 px-4">Étape</th>
-            <th className="py-2 px-4">Date/Heure</th>
+            <th className="py-2 px-4">Reference</th>
+            <th className="py-2 px-4">Step</th>
+            <th className="py-2 px-4">Date/Time</th>
           </tr>
         </thead>
         <tbody>

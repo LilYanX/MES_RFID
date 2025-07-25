@@ -30,31 +30,31 @@ export default function ArticleDetails({ article, events }: { article: Article; 
   console.log('RFID events reçus pour cet article:', events);
   return (
     <div className="bg-white rounded-xl shadow p-6 mb-8">
-      <h3 className="text-xl font-semibold mb-2">Fiche article</h3>
+      <h3 className="text-xl font-semibold mb-2">Article details</h3>
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div><span className="font-semibold">Name :</span> {article.name}</div>
         <div><span className="font-semibold">Type :</span> {article.type}</div>
-        <div><span className="font-semibold">Couleur :</span> {article.color}</div>
-        <div><span className="font-semibold">Taille :</span> {article.size}</div>
-        <div><span className="font-semibold">Matière :</span> {article.material}</div>
-        <div><span className="font-semibold">Prix de vente (RON) :</span> {article.sales_price_ron ?? '-'}</div>
-        <div><span className="font-semibold">Longueur (cm) :</span> {article.length_cm ?? '-'}</div>
-        <div><span className="font-semibold">Hauteur (cm) :</span> {article.hight_cm ?? '-'}</div>
-        <div><span className="font-semibold">Pré-traitement :</span> {article.pre_treatment}</div>
-        <div><span className="font-semibold">Étiquette entretien :</span> {article.care_label}</div>
-        <div><span className="font-semibold">Zone dispatch :</span> {article.dispatch_zone}</div>
-        <div><span className="font-semibold">Qualité :</span> {article.quality_requirements}</div>
-        <div><span className="font-semibold">Notes :</span> {article.notes}</div>
+        <div><span className="font-semibold">Color:</span> {article.color}</div>
+        <div><span className="font-semibold">Size:</span> {article.size}</div>
+        <div><span className="font-semibold">Material:</span> {article.material}</div>
+        <div><span className="font-semibold">Sales price (RON):</span> {article.sales_price_ron ?? '-'}</div>
+        <div><span className="font-semibold">Length (cm):</span> {article.length_cm ?? '-'}</div>
+        <div><span className="font-semibold">Height (cm):</span> {article.hight_cm ?? '-'}</div>
+        <div><span className="font-semibold">Pre-treatment:</span> {article.pre_treatment}</div>
+        <div><span className="font-semibold">Care label:</span> {article.care_label}</div>
+        <div><span className="font-semibold">Dispatch zone:</span> {article.dispatch_zone}</div>
+        <div><span className="font-semibold">Quality requirements:</span> {article.quality_requirements}</div>
+        <div><span className="font-semibold">Notes:</span> {article.notes}</div>
       </div>
-      <h4 className="font-semibold mb-2 mt-4">Historique RFID</h4>
+      <h4 className="font-semibold mb-2 mt-4">RFID History</h4>
       <table className="min-w-full text-center">
         <thead>
           <tr className="bg-gray-100">
             <th className="py-2 px-4">UUID</th>
-            <th className="py-2 px-4">Étape</th>
-            <th className="py-2 px-4">Type lecteur</th>
-            <th className="py-2 px-4">Opérateur</th>
-            <th className="py-2 px-4">Date/heure</th>
+            <th className="py-2 px-4">Step</th>
+            <th className="py-2 px-4">Reader type</th>
+            <th className="py-2 px-4">Operator</th>
+            <th className="py-2 px-4">Date/Time</th>
           </tr>
         </thead>
         <tbody>

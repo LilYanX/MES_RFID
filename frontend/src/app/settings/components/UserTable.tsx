@@ -21,11 +21,11 @@ export default function UserTable({ users, onEdit, onDelete }: {
       <table className="min-w-full text-center">
         <thead>
           <tr className="bg-gray-100">
-            <th className="py-2 px-4">Nom d'utilisateur</th>
+            <th className="py-2 px-4">Username</th>
             <th className="py-2 px-4">Nom</th>
-            <th className="py-2 px-4">Prénom</th>
+            <th className="py-2 px-4">First Name</th>
             <th className="py-2 px-4">Email</th>
-            <th className="py-2 px-4">Rôle</th>
+            <th className="py-2 px-4">Role</th>
             <th className="py-2 px-4">Admin</th>
             <th className="py-2 px-4">Actions</th>
           </tr>
@@ -38,19 +38,19 @@ export default function UserTable({ users, onEdit, onDelete }: {
               <td className="py-2 px-4">{user.first_name}</td>
               <td className="py-2 px-4">{user.email}</td>
               <td className="py-2 px-4">{user.role}</td>
-              <td className="py-2 px-4">{user.is_admin ? "Oui" : "Non"}</td>
+              <td className="py-2 px-4">{user.is_admin ? "Yes" : "No"}</td>
               <td className="py-2 px-4 flex gap-2 justify-center">
                 <button
                   onClick={() => onEdit(user)}
                   className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                  title="Modifier"
+                  title="Edit"
                 >
                   ✏️
                 </button>
                 <button
                   onClick={() => onDelete(user._id || user.uuid)}
                   className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
-                  title="Supprimer"
+                  title="Delete"
                 >
                   🗑️
                 </button>

@@ -17,7 +17,7 @@ interface User {
   password_hash?: string;
 }
 
-// Modal générique
+// Generic Modal
 const Modal = ({ onClose, children }: { onClose: () => void; children: React.ReactNode }) => {
   return ReactDOM.createPortal(
     <div className="fixed inset-0 bg-opacity-30 flex items-center justify-center z-50">
@@ -26,7 +26,7 @@ const Modal = ({ onClose, children }: { onClose: () => void; children: React.Rea
           className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-2xl"
           onClick={onClose}
           type="button"
-          aria-label="Fermer"
+          aria-label="Close"
         >×</button>
         {children}
       </div>
@@ -67,7 +67,7 @@ const SettingsPage = () => {
       }));
       setUsers(usersWithUuid);
     } catch (err) {
-      console.error("Erreur lors de la récupération des utilisateurs :", err);
+      console.error("Error retrieving users:", err);
     }
   };
 
@@ -80,7 +80,7 @@ const SettingsPage = () => {
       setShowAddModal(false);
       fetchUsers();
     } catch (err: any) {
-      setFormError(err.response?.data?.message || "Erreur lors de l'ajout.");
+      setFormError(err.response?.data?.message || "Error adding user.");
     } finally {
       setFormLoading(false);
     }
@@ -95,19 +95,19 @@ const SettingsPage = () => {
       setShowEditModal(false);
       fetchUsers();
     } catch (err: any) {
-      setFormError(err.response?.data?.message || "Erreur lors de la modification.");
+      setFormError(err.response?.data?.message || "Error updating user.");
     } finally {
       setFormLoading(false);
     }
   };
 
   const handleDeleteUser = async (id: string) => {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) return;
+    if (!confirm("Are you sure you want to delete this user?")) return;
     try {
       await axios.delete(`/auth/users/delete/${id}`);
       fetchUsers();
     } catch (err) {
-      alert("Erreur lors de la suppression.");
+      alert("Error during deletion.");
     }
   };
 
@@ -124,12 +124,12 @@ const SettingsPage = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6">Gestion des utilisateurs</h1>
+      <h1 className="text-2xl font-bold mb-6">User Management</h1>
       <div className="mb-6 flex gap-4 items-center">
         <input
           type="text"
           className="border rounded-lg px-3 py-2 flex-1"
-          placeholder="Rechercher par nom, prénom, email..."
+          placeholder="Search by name, first name, email..."
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
@@ -156,11 +156,11 @@ const SettingsPage = () => {
         <table className="min-w-full text-center">
           <thead>
             <tr className="bg-gray-100">
-              <th className="py-2 px-4">Nom d'utilisateur</th>
-              <th className="py-2 px-4">Nom</th>
-              <th className="py-2 px-4">Prénom</th>
+              <th className="py-2 px-4">Username</th>
+              <th className="py-2 px-4">Last Name</th>
+              <th className="py-2 px-4">First Name</th>
               <th className="py-2 px-4">Email</th>
-              <th className="py-2 px-4">Rôle</th>
+              <th className="py-2 px-4">Role</th>
               <th className="py-2 px-4">Admin</th>
               <th className="py-2 px-4">Actions</th>
             </tr>
@@ -173,7 +173,7 @@ const SettingsPage = () => {
                 <td className="py-2 px-4">{user.first_name}</td>
                 <td className="py-2 px-4">{user.email}</td>
                 <td className="py-2 px-4">{user.role}</td>
-                <td className="py-2 px-4">{user.is_admin ? "Oui" : "Non"}</td>
+                <td className="py-2 px-4">{user.is_admin ? "Yes" : "No"}</td>
                 <td className="py-2 px-4 flex gap-2 justify-center">
                   <button
                     onClick={() => {
@@ -181,14 +181,14 @@ const SettingsPage = () => {
                       setShowEditModal(true);
                     }}
                     className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                    title="Modifier"
+                    title="Edit"
                   >
                     ✏️
                   </button>
                   <button
                     onClick={() => handleDeleteUser(user._id || user.uuid)}
                     className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
-                    title="Supprimer"
+                    title="Delete"
                   >
                     🗑️
                   </button>
@@ -221,7 +221,7 @@ const SettingsPage = () => {
       {showEditModal && (
         <Modal onClose={() => setShowEditModal(false)}>
           <div className="bg-white rounded-xl shadow p-8 w-full max-w-xl">
-            <h2 className="text-lg font-semibold mb-4">Modifier l'utilisateur</h2>
+            <h2 className="text-lg font-semibold mb-4">Edit user</h2>
             <UserForm
               isEdit={true}
               formUser={formUser}

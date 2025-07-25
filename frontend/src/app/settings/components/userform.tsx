@@ -35,19 +35,19 @@ const UserForm: React.FC<UserFormProps> = ({
       <div className="space-y-4">
         <input
           className="border rounded-lg px-3 py-2 w-full"
-          placeholder="Nom d'utilisateur"
+          placeholder="Username"
           value={formUser.username}
           onChange={e => setFormUser(prev => ({ ...prev, username: e.target.value }))}
         />
         <input
           className="border rounded-lg px-3 py-2 w-full"
-          placeholder="Prénom"
+          placeholder="First Name"
           value={formUser.first_name}
           onChange={e => setFormUser(prev => ({ ...prev, first_name: e.target.value }))}
         />
         <input
           className="border rounded-lg px-3 py-2 w-full"
-          placeholder="Nom"
+          placeholder="Last Name"
           value={formUser.last_name}
           onChange={e => setFormUser(prev => ({ ...prev, last_name: e.target.value }))}
         />
@@ -63,7 +63,7 @@ const UserForm: React.FC<UserFormProps> = ({
           value={formUser.role}
           onChange={e => setFormUser(prev => ({ ...prev, role: e.target.value }))}
         >
-          <option value="user">Utilisateur</option>
+          <option value="user">User</option>
           <option value="admin">Admin</option>
         </select>
         <label className="flex items-center gap-2">
@@ -72,11 +72,11 @@ const UserForm: React.FC<UserFormProps> = ({
             checked={formUser.is_admin}
             onChange={e => setFormUser(prev => ({ ...prev, is_admin: e.target.checked }))}
           />
-          Admin ?
+          Admin?
         </label>
         <input
           className="border rounded-lg px-3 py-2 w-full"
-          placeholder="Mot de passe (laisser vide pour ne pas changer)"
+          placeholder="Password (leave empty to keep unchanged)"
           type="password"
           value={formUser.password_hash}
           onChange={e => setFormUser(prev => ({ ...prev, password_hash: e.target.value }))}
@@ -89,14 +89,14 @@ const UserForm: React.FC<UserFormProps> = ({
           className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
           onClick={onCancel}
         >
-          Annuler
+          Cancel
         </button>
         <button
           type="submit"
           className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
           disabled={formLoading}
         >
-          {isEdit ? "Enregistrer" : "Ajouter"}
+          {isEdit ? "Save" : "Add"}
         </button>
       </div>
     </form>

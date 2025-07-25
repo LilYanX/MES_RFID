@@ -34,18 +34,18 @@ interface RfidEvent {
 
 // Données mock pour démo
 const mockArticle: Article = {
-  name: "Pantalon bleu",
-  type: "Pantalon",
-  color: "Bleu marine",
+  name: "Blue pants",
+  type: "Pants",
+  color: "Navy blue",
   size: "L",
-  material: "Coton",
+  material: "Cotton",
   washing_time_min: 35,
   drying_time_min: 25,
-  pre_treatment: "Anti-tâches",
-  care_label: "Lavage à 40°C, ne pas blanchir",
-  dispatch_zone: "Nord",
-  quality_requirements: "Inspection visuelle, vérification couture",
-  notes: "Article fragile, éviter surcharges",
+  pre_treatment: "Stain resistant",
+  care_label: "Wash at 40°C, do not bleach",
+  dispatch_zone: "North",
+  quality_requirements: "Visual inspection, seam check",
+  notes: "Fragile item, avoid overloading",
   sales_price_ron: 99.99,
   length_cm: 110,
   hight_cm: 80
@@ -102,7 +102,7 @@ export default function ArticlesPage() {
           articlesArray = data.articles;
         } else {
           articlesArray = [];
-          console.error('Réponse inattendue de /api/articles:', data);
+          console.error('Unexpected response from /api/articles:', data);
         }
         // Mapping pour garantir le champ 'ref'
         setArticles(articlesArray.map((a: any) => ({ ...a, name: a.name || a.reference || "" })));
@@ -123,14 +123,14 @@ export default function ArticlesPage() {
     setError("");
     try {
       const aRes = await fetch(`http://localhost:8000/api/articles/${name}`);
-      if (!aRes.ok) throw new Error('Article non trouvé');
+      if (!aRes.ok) throw new Error('Article not found');
       const article = await aRes.json();
       setArticle(article);
       const eRes = await fetch(`http://localhost:8000/api/rfid_events/${name}`);
       const events = await eRes.json();
       setEvents(Array.isArray(events) ? events : []);
     } catch (e) {
-      setError("Article non trouvé ou erreur serveur.");
+      setError("Article not found or server error.");
       setArticle(null);
       setEvents([]);
     } finally {
@@ -145,11 +145,11 @@ export default function ArticlesPage() {
 
   return (
     <div className="p-8">
-      <h2 className="text-3xl font-bold mb-6">Liste des articles (UUID)</h2>
+      <h2 className="text-3xl font-bold mb-6">List of articles (UUID)</h2>
       <ArticleSearchBar search={search} setSearch={setSearch} />
       <ArticlesTable articles={filteredArticles} onSelect={(name) => { setUuid(name); fetchData(name); }} />
       {loading ? (
-        <p>Chargement...</p>
+        <p>Loading...</p>
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : article ? (

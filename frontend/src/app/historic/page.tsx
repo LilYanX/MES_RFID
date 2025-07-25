@@ -9,9 +9,9 @@ interface Scan {
 }
 
 const mockHistoric: Scan[] = [
-  { uuid: "A1B2C3", step: "Réception", date: "2025-07-14T09:15:00" },
-  { uuid: "D4E5F6", step: "Contrôle", date: "2025-07-14T10:20:00" },
-  { uuid: "G7H8I9", step: "Expédition", date: "2025-07-14T11:45:00" },
+  { uuid: "A1B2C3", step: "Reception", date: "2025-07-14T09:15:00" },
+  { uuid: "D4E5F6", step: "Control", date: "2025-07-14T10:20:00" },
+  { uuid: "G7H8I9", step: "Shipment", date: "2025-07-14T11:45:00" },
 ];
 
 export default function HistoricPage() {
@@ -36,9 +36,9 @@ export default function HistoricPage() {
 
   return (
     <main className="p-8">
-      <h2 className="text-3xl font-bold mb-6">Historique des Scans</h2>
+      <h2 className="text-3xl font-bold mb-6">Scan History</h2>
       {loading ? (
-        <p>Chargement...</p>
+        <p>Loading...</p>
       ) : (
         <HistoricTable scans={scans} />
       )}

@@ -47,7 +47,7 @@ export default function StatisticsCharts({ stats }: StatisticsChartsProps) {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {/* Répartition circulaire des articles par étape */}
       <div className="bg-white rounded-xl shadow p-6">
-        <h3 className="text-lg font-semibold mb-4">Répartition des articles</h3>
+        <h3 className="text-lg font-semibold mb-4">Article Distribution</h3>
         <PieChart
           data={stats.article_tracking.articles_by_step}
           size={300}

@@ -15,9 +15,9 @@ export default function DashboardTable({ articles }: { articles: Article[] }) {
         <thead className="bg-gray-100 text-gray-800">
           <tr>
             <th className="py-2 px-4 border">UUID</th>
-            <th className="py-2 px-4 border">Référence</th>
-            <th className="py-2 px-4 border">Étape</th>
-            <th className="py-2 px-4 border">Date de scan</th>
+            <th className="py-2 px-4 border">Reference</th>
+            <th className="py-2 px-4 border">Step</th>
+            <th className="py-2 px-4 border">Date of scan</th>
           </tr>
         </thead>
         <tbody>

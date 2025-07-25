@@ -26,16 +26,16 @@ export default function ArticlesTable({ articles, onSelect }: { articles: Articl
           <tr className="bg-gray-100">
             <th className="py-2 px-4">Name</th>
             <th className="py-2 px-4">Type</th>
-            <th className="py-2 px-4">Couleur</th>
-            <th className="py-2 px-4">Taille</th>
-            <th className="py-2 px-4">Matière</th>
+            <th className="py-2 px-4">Color</th>
+            <th className="py-2 px-4">Size</th>
+            <th className="py-2 px-4">Material</th>
             <th className="py-2 px-4">Action</th>
           </tr>
         </thead>
         <tbody>
           {articles.length === 0 ? (
             <tr>
-              <td colSpan={6} className="text-gray-400 py-4">Aucun article trouvé.</td>
+              <td colSpan={6} className="text-gray-400 py-4">No articles found.</td>
             </tr>
           ) : (
             articles.map((a) => (
@@ -57,7 +57,7 @@ export default function ArticlesTable({ articles, onSelect }: { articles: Articl
                     className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
                     onClick={() => onSelect(a.name)}
                   >
-                    Voir détail
+                    View details
                   </button>
                 </td>
               </tr>

@@ -22,7 +22,7 @@ export default function Home() {
         const data = await res.json()
         setArticles(data.articles)
       } catch (error) {
-        console.error('Erreur lors du chargement des articles :', error)
+        console.error('Error loading articles:', error)
       } finally {
         setLoading(false)
       }
@@ -35,7 +35,7 @@ export default function Home() {
     <main className="p-8">
       <DashboardHeader count={articles.length} />
       {loading ? (
-        <p>Chargement...</p>
+        <p>Loading...</p>
       ) : (
         <DashboardTable articles={articles} />
       )}

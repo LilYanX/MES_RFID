@@ -15,16 +15,16 @@ export default function StepsTable({ steps, onRemove }: { steps: Step[]; onRemov
         <thead>
           <tr className="bg-gray-100">
             <th className="py-2 px-4">#</th>
-            <th className="py-2 px-4">Nom</th>
-            <th className="py-2 px-4">Type de lecteur</th>
-            <th className="py-2 px-4">Date d'ajout</th>
+            <th className="py-2 px-4">Step name</th>
+            <th className="py-2 px-4">Reader type</th>
+            <th className="py-2 px-4">Date of creation</th>
             <th className="py-2 px-4">Action</th>
           </tr>
         </thead>
         <tbody>
           {steps.length === 0 ? (
             <tr>
-              <td colSpan={5} className="text-gray-400 py-4">Aucune étape enregistrée.</td>
+              <td colSpan={5} className="text-gray-400 py-4">No step registered.</td>
             </tr>
           ) : (
             steps.map((step) => (
@@ -37,9 +37,9 @@ export default function StepsTable({ steps, onRemove }: { steps: Step[]; onRemov
                   <button
                     className="text-red-500 hover:underline"
                     onClick={() => onRemove(step.step_id)}
-                    title="Supprimer"
+                    title="Delete"
                   >
-                    Supprimer
+                    Delete
                   </button>
                 </td>
               </tr>

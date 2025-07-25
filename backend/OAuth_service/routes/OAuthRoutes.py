@@ -231,8 +231,20 @@ async def list_users():
     users = []
     cursor = db_auth["users"].find()
     async for user in cursor:
-        user["uuid"] = str(user.get("uuid", ""))
-        users.append(UserModel(**user))
+        # Préparer les données avec des valeurs par défaut pour les champs manquants
+        user_data = {
+            "uuid": str(user.get("uuid", "")),
+            "username": user.get("username", ""),
+            "first_name": user.get("first_name", ""),
+            "last_name": user.get("last_name", ""),
+            "password_hash": user.get("password_hash", ""),
+            "email": user.get("email", ""),
+            "role": user.get("role", "user"),
+            "is_admin": user.get("is_admin", False),
+            "created_at": user.get("created_at", datetime.datetime.now()),
+            "updated_at": user.get("updated_at", datetime.datetime.now())
+        }
+        users.append(UserModel(**user_data))
     return users
 
 # get current user (me)

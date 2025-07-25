@@ -46,31 +46,31 @@ export default function StatsCards({
   const cards: StatCard[] = [
     {
       value: totalArticles,
-      label: "Articles total",
+      label: "Total Articles",
       color: "blue",
       icon: "fa-box"
     },
     {
       value: articlesInProgress,
-      label: "Articles en cours",
+      label: "Articles in Progress",
       color: "yellow",
       icon: "fa-clock"
     },
     {
       value: articlesFinishedToday,
-      label: "Articles terminés aujourd'hui",
+      label: "Articles Finished Today",
       color: "green",
       icon: "fa-check"
     },
     {
       value: formatTime(averageProcessingTime),
-      label: "Temps moyen de traitement",
+      label: "Average Processing Time",
       color: "purple",
       icon: "fa-clock"
     },
     {
       value: activeAlerts,
-      label: "Alertes actives",
+      label: "Active Alerts",
       color: "red",
       icon: "fa-exclamation-triangle"
     }

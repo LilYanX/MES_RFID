@@ -13,7 +13,7 @@ interface InventoryItem {
   step_name: string;
 }
 
-export default function InventairePage() {
+export default function InventoryPage() {
   const dispatch = useAppDispatch();
   const typedDispatch: AppDispatch = dispatch;
   const { data: inventory, loading, error, steps, stepsLoading, stepsError } = useAppSelector(
@@ -62,7 +62,7 @@ export default function InventairePage() {
   return (
     <main className="p-4 md:p-8 bg-gray-50 dark:bg-gray-900 min-h-screen">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Inventory RFID</h2>
+        <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100">RFID Inventory</h2>
        
       </div>
       {stepsLoading ? (
