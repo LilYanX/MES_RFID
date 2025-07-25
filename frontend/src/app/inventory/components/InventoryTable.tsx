@@ -35,7 +35,7 @@ export default function InventoryTable({ inventory }: { inventory: InventoryItem
                     </tr>
                   ))}
                 <tr>
-                  <td colSpan={3} className="py-2 px-4 font-semibold text-blue-700 dark:text-blue-300 bg-gray-100 dark:bg-gray-800 text-right">
+                  <td colSpan={3} className="py-2 px-4 font-semibold dark:text-blue-300 bg-gray-100 dark:bg-gray-800 text-right border-t hover:bg-gray-50">
                     Total: {inventory.length} lignes
                   </td>
                 </tr>
