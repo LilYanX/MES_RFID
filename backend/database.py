@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Get MongoDB connection details from environment variables
-MONGO_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 DB_NAME = os.getenv("MONGODB_DB", "mes_rfid")
 
 # Create a MongoDB client

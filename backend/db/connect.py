@@ -1,16 +1,23 @@
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-from urllib.parse import quote_plus
+import os
+from dotenv import load_dotenv
 
-username = quote_plus("admin")
-password = quote_plus("G0@tDesEchecs")
+# Charger les variables d'environnement
+load_dotenv()
 
-uri = f"mongodb+srv://{username}:{password}@dbrfid.ojrspq8.mongodb.net/?retryWrites=true&w=majority&appName=DBRFID"
+# Récupérer les identifiants depuis les variables d'environnement
+MONGO_URI = os.getenv("MONGO_URI")
 
-client = MongoClient(uri, server_api=ServerApi('1'))
+if not MONGO_URI:
+    raise ValueError("La variable d'environnement MONGO_URI n'est pas définie")
+
+# Créer le client MongoDB
+client = MongoClient(MONGO_URI, server_api=ServerApi('1'))
 
 try:
     client.admin.command('ping')
     print("Connected to MongoDB Atlas successfully!")
 except Exception as e:
     print("Connection failed:", e)
+    raise

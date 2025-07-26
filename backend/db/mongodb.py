@@ -4,7 +4,7 @@ import os
 
 load_dotenv()
 
-MONGO_URL = os.getenv("MONGO_URI")
-client = AsyncIOMotorClient(MONGO_URL)
+MONGO_URI = os.getenv("MONGO_URI")
+client = AsyncIOMotorClient(MONGO_URI)
 db = client["mes_rfid"]
 db_auth = client["OAuth"]

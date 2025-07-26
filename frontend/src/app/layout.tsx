@@ -4,9 +4,13 @@ import "./globals.css"
 import ReduxProvider from '@/components/ReduxProvider';
 import AuthProvider from "@/components/AuthProvider";
 
+
 export const metadata = {
   title: "MES RFID",
   description: "Track and manage textile production with RFID",
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 // ---- Composants de menu et icônes ----
@@ -61,7 +65,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="flex min-h-screen bg-gray-100 text-gray-900">
         <aside className="w-64 bg-white shadow-lg p-4 space-y-4">
           <h1 className="text-2xl font-extrabold text-blue-700 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6l4 2" /></svg>
+              <img 
+                src="/mes_rfid_logo.png" 
+                alt="MES RFID Logo" 
+                className="h-16 w-auto"
+              />
             MES RFID
           </h1>
           <nav className="flex flex-col gap-1 mt-6">
